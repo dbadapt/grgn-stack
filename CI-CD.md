@@ -17,7 +17,7 @@ GRGN Stack uses **GitHub Actions** for continuous integration and deployment. Th
 
 #### Backend Job
 
-- Sets up Go 1.21
+- Sets up Go 1.24
 - Runs `go fmt` check
 - Runs `go vet` linting
 - Executes tests with race detection

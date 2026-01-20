@@ -53,7 +53,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 
 ## Backend Configuration
 
-Configuration is loaded via the `internal/config` package using Viper:
+Configuration is loaded via the `pkg/config` package using Viper:
 
 - Reads from .env files
 - Can be overridden by environment variables
@@ -62,7 +62,7 @@ Configuration is loaded via the `internal/config` package using Viper:
 Example usage in Go:
 
 ```go
-import "github.com/yourusername/grgn-stack/internal/config"
+import "github.com/yourusername/grgn-stack/pkg/config"
 
 cfg, err := config.Load()
 if err != nil {
@@ -102,7 +102,7 @@ if (isDevelopment) {
 
 ### Backend
 
-1. Add to `internal/config/config.go` struct
+1. Add to `pkg/config/config.go` struct
 2. Add default in `setDefaults()`
 3. Add to `.env.example`
 4. Update environment-specific .env files

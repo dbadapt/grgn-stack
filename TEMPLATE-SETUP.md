@@ -348,7 +348,7 @@ Comprehensive guides are included:
 
 ### Backend
 
-- **Go 1.22+** - Programming language
+- **Go 1.24+** - Programming language
 - **Gin** - Web framework
 - **gqlgen** - GraphQL server & code generation
 - **Neo4j Go Driver** - Database client

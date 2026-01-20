@@ -54,7 +54,8 @@ web/coverage/
 docker-compose.override.yml
 
 # Project specific
-backend/tmp/
+backend/tmp/*
+!backend/tmp/.gitkeep
 .air.toml
 mcp-servers.json
 

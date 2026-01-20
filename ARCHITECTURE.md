@@ -139,9 +139,6 @@ backend/
 │
 └── internal/               # Internal packages
     │
-    ├── config/             # Configuration management
-    │   └── config.go          # Viper-based config
-    │
     ├── database/           # Database layer
     │   ├── neo4j.go           # Connection & driver
     │   └── migrations/        # Database migrations
@@ -159,6 +156,15 @@ backend/
     │
     └── repository/         # Data access layer
         └── *_repository.go    # Database operations
+```
+
+### Shared Packages (pkg/)
+
+```
+pkg/
+│
+└── config/                 # Configuration management
+    └── config.go              # Viper-based config loading
 ```
 
 ### Shared Schema
