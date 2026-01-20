@@ -1,7 +1,8 @@
 {
   "name": "web",
   "version": "1.0.0",
-  "description": "",
+  "description": "GRGN Stack Frontend - React + TypeScript + Mantine UI",
+  "author": "",
   "main": "main.js",
   "type": "module",
   "scripts": {
@@ -16,7 +17,6 @@
     "generate": "graphql-codegen --config codegen.yml"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.39.2",

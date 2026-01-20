@@ -33,24 +33,12 @@ This directory contains visual graph model designs created with [Arrows.app](htt
   - Supports: Google, Apple, SAML, local auth
   - Status: Ready for import and editing
 
-- **`order-model.json`** - Order and payment flow
-  - Nodes: User, Order, QRCode, PaymentProvider
-  - Relationships: PLACED, CONTAINS, PAYMENT_VIA
-  - Supports: Stripe, PayPal, Google Pay, etc.
-  - Status: Ready for import and editing
+### 💡 Ideas for Your Models
 
-- **`scavenger-hunt-model.json`** - Scavenger hunt application
-  - Nodes: User, ScavengerHunt, Checkpoint, QRCode
-  - Relationships: CREATED, PARTICIPATING_IN, HAS_CHECKPOINT, SCANNED
-  - Features: Progress tracking, points system
-  - Status: Ready for import and editing
-
-### ⏳ To Be Created
-
-- `inventory-model.json` - Inventory tracking application
-- `reservation-model.json` - Reservation system
-- `analytics-model.json` - Analytics and reporting nodes
-- `notification-model.json` - Notification system
+- `inventory-model.json` - Inventory tracking
+- `order-model.json` - E-commerce orders and payments
+- `reservation-model.json` - Booking/reservation system
+- `social-model.json` - Social features (follows, likes, comments)
 
 ## 🎨 How to Use These Models
 
@@ -82,6 +70,7 @@ This directory contains visual graph model designs created with [Arrows.app](htt
 ### After Editing a Model
 
 Tell Copilot:
+
 ```
 I've updated [filename].json with [description of changes].
 Please:
@@ -95,12 +84,14 @@ Please:
 ### Example Prompts
 
 **Simple update:**
+
 ```
 I added MFA support to auth-model.json. Please implement the MFAProvider node
 and HAS_MFA relationship.
 ```
 
 **Complex feature:**
+
 ```
 I've created inventory-model.json for the inventory tracking application.
 It has InventoryItem, Location, and StockMovement nodes. Please implement:
@@ -111,6 +102,7 @@ It has InventoryItem, Location, and StockMovement nodes. Please implement:
 ```
 
 **Just review:**
+
 ```
 I'm working on order-model.json. Can you review the current structure and
 suggest improvements before I finalize it?
@@ -119,22 +111,27 @@ suggest improvements before I finalize it?
 ## 📐 Design Guidelines
 
 ### Node Names
+
 - Use **PascalCase**: `ScavengerHunt`, `AuthProvider`
 - Be specific: `MFAProvider` not `Provider`
 - Singular form: `User` not `Users`
 
 ### Relationship Types
+
 - Use **UPPERCASE_SNAKE_CASE**: `AUTHENTICATED_BY`, `HAS_CHECKPOINT`
 - Be descriptive: `OWNS` not `HAS`
 - Action-oriented: `PLACED` (past tense), `PARTICIPATING_IN` (present)
 
 ### Properties
+
 - Include type hints: `"points": "Integer"`, `"email": "String (unique)"`
 - Mark constraints: `"id": "UUID (unique)"`, `"email": "String (required)"`
 - Use meaningful names: `totalAmount` not `amt`
 
 ### Colors
+
 Use colors to group related nodes:
+
 - 🟢 **Green (#68BC00)**: User/Account nodes
 - 🔵 **Blue (#4C8EDA)**: Core business entities (QRCode)
 - 🔴 **Red (#FB7E81)**: Authentication/Security
@@ -208,17 +205,20 @@ Before asking Copilot to implement:
 ## 🆘 Troubleshooting
 
 ### Model won't import to Arrows.app
+
 - Ensure JSON is valid (use a JSON validator)
 - Check file encoding is UTF-8
 - Verify no syntax errors in the file
 
 ### Copilot doesn't understand model
+
 - Check JSON has proper node/relationship structure
 - Describe changes in plain English
 - Point to similar existing implementations
 - Ask Copilot to "read [filename].json first"
 
 ### Model too complex
+
 - Break into smaller focused models
 - Use separate files for different domains
 - Link related models through documentation
