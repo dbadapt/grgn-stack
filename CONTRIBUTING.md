@@ -81,7 +81,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 - Docker & Docker Compose
 - Node.js 18+
-- Go 1.21+
+- Go 1.24+ (see [Go Version Management](#go-version-management) below)
 
 ### Initial Setup
 
@@ -137,6 +137,63 @@ scripts/         # Utility scripts
 - Keep schema changes backward compatible
 
 ## Testing Guidelines
+
+### Go Version Management
+
+> ⚠️ **Important**: This project requires **Go 1.24.0 or higher** due to transitive dependency requirements.
+
+#### Why Go 1.24?
+
+Several dependencies in the Go ecosystem have updated their minimum Go version requirements:
+
+| Package                  | Requires |
+| ------------------------ | -------- |
+| `gin-contrib/sse@v1.1.0` | Go 1.23+ |
+| `golang.org/x/crypto`    | Go 1.24+ |
+| `golang.org/x/net`       | Go 1.24+ |
+| `golang.org/x/sys`       | Go 1.24+ |
+| `golang.org/x/text`      | Go 1.24+ |
+
+#### Files That Must Stay in Sync
+
+When changing Go versions, update **all** of these files:
+
+1. `go.work` - Workspace Go version
+2. `backend/go.mod` - Backend module version
+3. `pkg/go.mod` - Shared package module version
+4. `backend/Dockerfile` - Docker image base
+5. `.github/workflows/ci.yml` - CI Go version
+
+#### After Changing Go Versions
+
+```bash
+# Always run go mod tidy after version changes
+cd backend && go mod tidy && cd ..
+cd pkg && go mod tidy && cd ..
+
+# Verify local build
+cd backend && go build ./... && cd ..
+
+# Rebuild Docker containers
+docker-compose down
+docker-compose up --build
+```
+
+#### Troubleshooting Version Errors
+
+If you see errors like:
+
+```
+module X requires go >= 1.XX (running go 1.YY; GOTOOLCHAIN=local)
+```
+
+This means a dependency needs a newer Go version. Check the dependency chain:
+
+```bash
+cd backend
+go mod graph | Select-String "package-name"  # Windows
+go mod graph | grep "package-name"           # Linux/Mac
+```
 
 ### Backend Tests
 

@@ -58,7 +58,7 @@ The initialization script will:
 
 ### Backend
 
-- **Go 1.21+** with Gin web framework
+- **Go 1.24+** with Gin web framework
 - **GraphQL** with gqlgen code generation
 - **Neo4j** graph database
 - **Viper** for configuration management
@@ -88,7 +88,7 @@ The initialization script will:
 
 - **Docker** & **Docker Compose**
 - **Node.js** 18+
-- **Go** 1.21+
+- **Go** 1.24+
 
 ### Setup (After Template Initialization)
 

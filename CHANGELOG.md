@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Go 1.24.0 Required**: Upgraded from Go 1.22 to Go 1.24.0 due to transitive dependency requirements:
+  - `gin-contrib/sse@v1.1.0` requires Go 1.23+
+  - `golang.org/x/crypto`, `golang.org/x/net`, and other `golang.org/x/*` packages require Go 1.24+
+  - Updated: `go.work`, `backend/go.mod`, `pkg/go.mod`, `backend/Dockerfile`, `.github/workflows/ci.yml`
+  - Run `go mod tidy` after any Go version changes to sync dependencies
+
 ### Security
 
 ## [1.0.0] - YYYY-MM-DD
