@@ -2,9 +2,9 @@
 
 > **G**o + **R**eact + **G**raphQL + **N**eo4j (pronounced "Gur-gen")
 
-![CI](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/CI/badge.svg)
-![Coverage](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Coverage/badge.svg)
-![Docker Build](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Docker%20Build/badge.svg)
+![CI](https://github.com/dbadapt/grgn-stack/workflows/CI/badge.svg)
+![Coverage](https://github.com/dbadapt/grgn-stack/workflows/Coverage/badge.svg)
+![Docker Build](https://github.com/dbadapt/grgn-stack/workflows/Docker%20Build/badge.svg)
 
 ![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go&logoColor=white)
 ![Node Version](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)
@@ -377,8 +377,8 @@ This template provides the foundation. Add your business logic:
 ## Support
 
 - 📖 Read the [documentation](./SCHEMA-QUICKREF.md)
-- 🐛 Report issues on [GitHub Issues](https://github.com/YOUR_USERNAME/YOUR_REPO/issues)
-- 💬 Discuss on [GitHub Discussions](https://github.com/YOUR_USERNAME/YOUR_REPO/discussions)
+- 🐛 Report issues on [GitHub Issues](https://github.com/dbadapt/grgn-stack/issues)
+- 💬 Discuss on [GitHub Discussions](https://github.com/dbadapt/grgn-stack/discussions)
 
 ---
 

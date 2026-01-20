@@ -87,7 +87,7 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+git clone https://github.com/dbadapt/grgn-stack.git
 cd YOUR_REPO
 
 # Install dependencies
