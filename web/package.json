@@ -16,11 +16,6 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "generate": "graphql-codegen --config codegen.yml"
   },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix"
-    ]
-  },
   "keywords": [],
   "license": "ISC",
   "devDependencies": {

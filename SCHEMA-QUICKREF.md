@@ -190,10 +190,8 @@ schema/
 ├── schema.graphql               ← GraphQL API schema (Copilot)
 └── graph-models/                ← Visual models (You)
     ├── README.md
-    ├── core-model.json          ← User & QRCode
-    ├── auth-model.json          ← Authentication
-    ├── order-model.json         ← Orders & payments
-    └── scavenger-hunt-model.json ← Scavenger hunt
+    ├── core-model.json          ← User entity
+    └── auth-model.json          ← Authentication providers
 
 backend/
 ├── internal/

@@ -1,8 +1,5 @@
-# Run lint-staged for root (Go files)
+# Run lint-staged (handles both Go and TypeScript from root)
 npx lint-staged
-
-# Run lint-staged for web directory
-cd web && npx lint-staged && cd ..
 
 # Run quick tests (not full coverage)
 echo "Running tests..."

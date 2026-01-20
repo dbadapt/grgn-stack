@@ -6,7 +6,27 @@
 ![Coverage](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Coverage/badge.svg)
 ![Docker Build](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Docker%20Build/badge.svg)
 
+![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?logo=go&logoColor=white)
+![Node Version](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)
+![Neo4j Version](https://img.shields.io/badge/Neo4j-5-4581C3?logo=neo4j&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+
 A modern, production-ready full-stack template for building applications with Go, Neo4j graph database, GraphQL API, and React frontend.
+
+---
+
+## ⚡ Prerequisites
+
+Before using this template, ensure you have:
+
+| Requirement        | Version | Check Command            |
+| ------------------ | ------- | ------------------------ |
+| **Docker**         | Latest  | `docker --version`       |
+| **Docker Compose** | v2+     | `docker compose version` |
+| **Node.js**        | 18+     | `node --version`         |
+| **Go**             | 1.24+   | `go version`             |
+
+> **Note:** Go 1.24+ is required due to transitive dependency requirements (`golang.org/x/*` packages).
 
 ---
 
@@ -47,12 +67,35 @@ The initialization script will:
 - 📊 **GraphQL API**: Type-safe API with automatic code generation (gqlgen)
 - 🎨 **React Frontend**: Mantine UI components + TanStack Query
 - 🗄️ **Neo4j Database**: Graph database with migration support
-- 🔐 **Authentication Ready**: Multi-provider auth structure prepared
+- 🔐 **Authentication Ready**: Multi-provider auth structure prepared (implementation required)
 - 🎨 **Visual Schema Design**: Arrows.app integration for collaborative modeling
 - 🐳 **Fully Containerized**: Docker Compose for all environments
 - ✅ **Testing**: Comprehensive test coverage with CI/CD
 - 🔄 **Multi-Environment**: Dev, staging, production configurations
 - 📝 **Well Documented**: Complete guides for development workflow
+
+> **Note on Authentication:** This template provides the _structure_ for authentication (environment variables, AuthProvider graph model, config loading) but not the actual OAuth/JWT implementation. You'll implement your chosen auth providers using the provided foundation.
+
+## What's Included vs. What You Build
+
+### ✅ Ready to Use
+
+- User entity with GraphQL queries (`health`, `me`, `user`)
+- Neo4j database with migration framework
+- Docker Compose for dev/staging/production
+- CI/CD pipelines (GitHub Actions)
+- Testing infrastructure (Go + Vitest)
+- Code generation (gqlgen + graphql-codegen)
+- Git hooks (Husky + lint-staged)
+- Visual schema design workflow (Arrows.app)
+
+### 🔨 You Implement
+
+- Authentication logic (OAuth, JWT - structure provided)
+- Your domain entities and relationships
+- Business logic in resolvers
+- Additional frontend components
+- Deployment secrets and infrastructure
 
 ## Tech Stack
 
@@ -127,10 +170,10 @@ The initialization script will:
 npm test
 
 # Backend tests only
-npm run test:go
+npm run test:backend
 
 # Frontend tests only
-npm run test:web
+npm run test:frontend
 
 # With coverage
 npm run coverage
@@ -267,8 +310,8 @@ npm run test:ci
 
 # Coverage reports
 npm run coverage
-npm run coverage:go
-npm run coverage:web
+npm run coverage:backend
+npm run coverage:frontend
 ```
 
 See [TESTING-CI.md](TESTING-CI.md) and [CI-CD.md](CI-CD.md) for details.

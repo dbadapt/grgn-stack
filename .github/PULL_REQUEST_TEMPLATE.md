@@ -34,8 +34,8 @@ Fixes #(issue number)
 
 ### Test Coverage
 
-- [ ] Backend tests pass (`npm run test:go`)
-- [ ] Frontend tests pass (`npm run test:web`)
+- [ ] Backend tests pass (`npm run test:backend`)
+- [ ] Frontend tests pass (`npm run test:frontend`)
 - [ ] All tests pass (`npm test`)
 - [ ] Added new tests for changes
 

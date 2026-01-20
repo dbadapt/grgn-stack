@@ -43,7 +43,7 @@ Tests will fail if coverage drops below:
 
 ```bash
 # From project root
-npm run coverage:go
+npm run coverage:backend
 
 # Or directly
 cd backend

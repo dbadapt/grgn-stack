@@ -49,8 +49,8 @@ Thank you for your interest in contributing! This document provides guidelines f
    npm test
 
    # Run specific tests
-   npm run test:go    # Backend
-   npm run test:web   # Frontend
+   npm run test:backend    # Backend
+   npm run test:frontend   # Frontend
    ```
 
 4. **Ensure code quality**

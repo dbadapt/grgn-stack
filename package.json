@@ -84,6 +84,9 @@
   "lint-staged": {
     "backend/**/*.go": [
       "gofmt -w"
+    ],
+    "web/**/*.{ts,tsx}": [
+      "eslint --fix --config web/eslint.config.js"
     ]
   }
 }

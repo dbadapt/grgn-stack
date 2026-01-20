@@ -170,15 +170,15 @@ schema/
 └── schema.graphql    # Main GraphQL schema
 ```
 
-### Types Defined
+### Types Defined (Template Baseline)
 
-- **User**: User account information
-- **QRCode**: QR code data and metadata
-- **Enums**: QRCodeStatus, QRCodeFormat, ApplicationType
-- **Inputs**: CreateQRCodeInput, UpdateQRCodeInput, PaginationInput
-- **Queries**: health, me, user, qrCode, myQRCodes, qrCodesByApplication
-- **Mutations**: createQRCodes, updateQRCode, deleteQRCode, fulfillQRCode
-- **Subscriptions**: qrCodeUpdated (for real-time updates)
+- **User**: Basic user account information
+- **PaginationInput**: Standard pagination input
+- **Queries**: `health`, `me`, `user(id: ID!)`
+- **Mutations**: `_empty` (placeholder - add your mutations here)
+- **Subscriptions**: `_empty` (placeholder - add real-time updates here)
+
+> **Note:** This is the minimal starting schema. Add your domain-specific types, queries, and mutations following the schema-first workflow described below.
 
 ## Development Workflow
 

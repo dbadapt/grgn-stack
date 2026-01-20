@@ -155,10 +155,10 @@ Open your browser:
 npm test
 
 # Backend only
-npm run test:go
+npm run test:backend
 
 # Frontend only
-npm run test:web
+npm run test:frontend
 
 # With coverage
 npm run coverage
@@ -289,11 +289,11 @@ npm test
 
 ```bash
 # Backend
-npm run coverage:go
+npm run coverage:backend
 # Opens coverage.html in backend/
 
 # Frontend
-npm run coverage:web
+npm run coverage:frontend
 # Opens coverage in web/coverage/
 ```
 
