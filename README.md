@@ -207,12 +207,13 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 ├── backend/                 # Go backend
 │   ├── cmd/                # CLI commands (migrate, etc.)
 │   ├── internal/
-│   │   ├── config/        # Configuration management
 │   │   ├── database/      # Neo4j connection & migrations
 │   │   ├── graphql/       # GraphQL resolvers & generated code
 │   │   └── repository/    # Data access layer
 │   ├── main.go
 │   └── gqlgen.yml         # GraphQL codegen config
+├── pkg/                    # Shared Go packages
+│   └── config/            # Configuration management
 ├── web/                    # React frontend
 │   ├── src/
 │   │   ├── graphql/      # GraphQL queries & generated code

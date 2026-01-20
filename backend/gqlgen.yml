@@ -27,6 +27,22 @@ exec:
 # Only create resolvers for Query, Mutation, Subscription
 autobind: []
 
+# Model bindings - use gqlgen's built-in introspection types
+# and disable resolver generation for introspection fields
+models:
+  __InputValue:
+    model: github.com/99designs/gqlgen/graphql/introspection.InputValue
+    fields:
+      isDeprecated:
+        resolver: false
+      deprecationReason:
+        resolver: false
+  __Type:
+    model: github.com/99designs/gqlgen/graphql/introspection.Type
+    fields:
+      isOneOf:
+        resolver: false
+
 # Skip validation of schema
 skip_validation: false
 

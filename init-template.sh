@@ -242,7 +242,7 @@ info "Cleaning up template-specific files..."
 
 read -p "Remove template initialization files? (y/N) " remove_files
 if [ "$remove_files" = "y" ] || [ "$remove_files" = "Y" ]; then
-    for file in init-template.ps1 init-template.sh TEMPLATE-SETUP.md; do
+    for file in init-template.ps1 init-template.sh TEMPLATE-SETUP.md USING-TEMPLATE.md; do
         if [ -f "$file" ]; then
             rm "$file"
             info "Removed $file"

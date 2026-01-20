@@ -217,7 +217,8 @@ Write-Info "Cleaning up template-specific files..."
 $templateFiles = @(
     "init-template.ps1",
     "init-template.sh",
-    "TEMPLATE-SETUP.md"
+    "TEMPLATE-SETUP.md",
+    "USING-TEMPLATE.md"
 )
 
 $removeFiles = Read-Host "Remove template initialization files? (y/N)"

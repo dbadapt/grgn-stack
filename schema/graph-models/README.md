@@ -22,9 +22,9 @@ This directory contains visual graph model designs created with [Arrows.app](htt
 
 ### ✅ Created (Starter Templates)
 
-- **`core-model.json`** - Core User and QRCode relationships
-  - Nodes: User, QRCode
-  - Relationships: User -[:OWNS]-> QRCode
+- **`core-model.json`** - Core User entity
+  - Nodes: User
+  - Base entity for your application users
   - Status: Ready for import and editing
 
 - **`auth-model.json`** - Authentication and MFA

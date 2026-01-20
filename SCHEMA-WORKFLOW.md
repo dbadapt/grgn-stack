@@ -207,7 +207,7 @@ Copilot will:
 
 1. Create comprehensive Arrows.app model:
    - User -[:PLACED]-> Order
-   - Order -[:CONTAINS]-> QRCode
+   - Order -[:CONTAINS]-> Product
    - Order -[:PAYMENT_VIA]-> PaymentProvider
 2. Save as `order-flow.json`
 3. Describe business rules to Copilot
@@ -321,18 +321,18 @@ type User {
 **Neo4j:**
 
 ```cypher
-(:User)-[:OWNS]->(:QRCode)
+(:User)-[:PURCHASED]->(:Product)
 ```
 
 **GraphQL:**
 
 ```graphql
 type User {
-  qrCodes: [QRCode!]!
+  products: [Product!]!
 }
 
-type QRCode {
-  user: User!
+type Product {
+  purchasedBy: User!
 }
 ```
 
@@ -341,19 +341,19 @@ type QRCode {
 **Neo4j Cypher:**
 
 ```cypher
-MATCH (u:User)-[:OWNS]->(qr:QRCode)
-WHERE qr.status = 'ACTIVE'
-RETURN u, qr
+MATCH (u:User)-[:PURCHASED]->(p:Product)
+WHERE p.status = 'AVAILABLE'
+RETURN u, p
 ```
 
 **GraphQL Query:**
 
 ```graphql
 query {
-  myQRCodes(status: ACTIVE) {
+  myProducts(status: AVAILABLE) {
     items {
       id
-      code
+      name
       status
     }
   }
@@ -366,10 +366,10 @@ query {
 
 ### ✅ Completed
 
-- Initial User and QRCode nodes
-- Basic OWNS relationship
+- Initial User node and schema
 - GraphQL schema for core entities
 - Migration framework setup
+- Authentication provider structure
 
 ### 🚧 In Progress
 
@@ -390,7 +390,7 @@ query {
 
 1. **Create Core Model**
    - Open Arrows.app
-   - Import existing User/QRCode structure
+   - Import existing User structure or create new
    - Save as `schema/graph-models/core-model.json`
 
 2. **Design Auth Providers**

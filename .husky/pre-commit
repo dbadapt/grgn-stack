@@ -1,5 +1,8 @@
-# Run lint-staged to check and fix linting on staged files
+# Run lint-staged for root (Go files)
 npx lint-staged
+
+# Run lint-staged for web directory
+cd web && npx lint-staged && cd ..
 
 # Run quick tests (not full coverage)
 echo "Running tests..."

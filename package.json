@@ -82,9 +82,6 @@
     "lint-staged": "^16.2.7"
   },
   "lint-staged": {
-    "web/**/*.{ts,tsx}": [
-      "cd web && eslint --fix"
-    ],
     "backend/**/*.go": [
       "gofmt -w"
     ]

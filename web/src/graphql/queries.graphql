@@ -24,81 +24,23 @@ query GetUser($id: ID!) {
   }
 }
 
-query GetQRCode($id: ID!) {
-  qrCode(id: $id) {
-    id
-    code
-    status
-    format
-    applicationType
-    imageUrl
-    targetUrl
-    metadata
-    createdAt
-    updatedAt
-    user {
-      id
-      email
-      name
-    }
-  }
-}
-
-query GetMyQRCodes($pagination: PaginationInput) {
-  myQRCodes(pagination: $pagination) {
-    items {
-      id
-      code
-      status
-      format
-      applicationType
-      imageUrl
-      targetUrl
-      createdAt
-      updatedAt
-    }
-    totalCount
-    page
-    pageSize
-    totalPages
-  }
-}
-
-mutation CreateQRCodes($input: CreateQRCodeInput!) {
-  createQRCodes(input: $input) {
-    id
-    code
-    status
-    format
-    applicationType
-    imageUrl
-    targetUrl
-    metadata
-    createdAt
-    updatedAt
-  }
-}
-
-mutation UpdateQRCode($input: UpdateQRCodeInput!) {
-  updateQRCode(input: $input) {
-    id
-    code
-    status
-    targetUrl
-    applicationType
-    metadata
-    updatedAt
-  }
-}
-
-mutation DeleteQRCode($id: ID!) {
-  deleteQRCode(id: $id)
-}
-
-mutation FulfillQRCode($id: ID!) {
-  fulfillQRCode(id: $id) {
-    id
-    status
-    updatedAt
-  }
-}
+# Add your custom queries and mutations below
+# Example:
+#
+# query GetProducts($pagination: PaginationInput) {
+#   products(pagination: $pagination) {
+#     items {
+#       id
+#       name
+#       price
+#     }
+#     totalCount
+#   }
+# }
+#
+# mutation CreateProduct($input: CreateProductInput!) {
+#   createProduct(input: $input) {
+#     id
+#     name
+#   }
+# }
