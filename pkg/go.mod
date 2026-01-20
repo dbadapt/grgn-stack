@@ -1,6 +1,6 @@
 module github.com/yourusername/grgn-stack/pkg
 
-go 1.22
+go 1.24
 
 require github.com/spf13/viper v1.21.0
 

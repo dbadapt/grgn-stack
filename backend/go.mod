@@ -1,6 +1,6 @@
 module github.com/yourusername/grgn-stack
 
-go 1.22
+go 1.24
 
 require (
 	github.com/99designs/gqlgen v0.17.55
