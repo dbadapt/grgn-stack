@@ -166,6 +166,7 @@ echo ""
 # Step 1: Update Go module paths
 info "Updating Go module paths..."
 replace_in_all_files "github.com/yourusername/grgn-stack" "github.com/$GITHUB_USER/$REPO_NAME"
+replace_in_all_files "github.com/dbadapt/grgn-stack" "github.com/$GITHUB_USER/$REPO_NAME"
 success "Go module paths updated"
 
 # Step 2: Update environment variable prefix
@@ -183,6 +184,8 @@ success "Project name updated"
 info "Updating README badges..."
 replace_in_file "README.md" "YOUR_USERNAME" "$GITHUB_USER"
 replace_in_file "README.md" "YOUR_REPO" "$REPO_NAME"
+# Also replace template owner's values
+replace_in_file "README.md" "dbadapt" "$GITHUB_USER"
 success "README updated"
 
 # Step 5: Update other documentation
@@ -191,6 +194,8 @@ for file in CONTRIBUTING.md TESTING-CI.md CI-CD.md CONFIG.md; do
     if [ -f "$file" ]; then
         replace_in_file "$file" "YOUR_USERNAME" "$GITHUB_USER"
         replace_in_file "$file" "YOUR_REPO" "$REPO_NAME"
+        # Also replace template owner's values
+        replace_in_file "$file" "dbadapt" "$GITHUB_USER"
     fi
 done
 success "Documentation updated"

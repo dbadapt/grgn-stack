@@ -135,6 +135,7 @@ Write-Host ""
 # Step 1: Update Go module paths
 Write-Info "Updating Go module paths..."
 Update-AllFiles -Find "github.com/yourusername/grgn-stack" -Replace "github.com/$GitHubUsername/$RepoName"
+Update-AllFiles -Find "github.com/dbadapt/grgn-stack" -Replace "github.com/$GitHubUsername/$RepoName"
 Write-Success "Go module paths updated"
 
 # Step 2: Update environment variable prefix
@@ -152,6 +153,8 @@ Write-Success "Project name updated"
 Write-Info "Updating README badges..."
 Update-FileContent -FilePath "README.md" -Find "YOUR_USERNAME" -Replace $GitHubUsername
 Update-FileContent -FilePath "README.md" -Find "YOUR_REPO" -Replace $RepoName
+# Also replace template owner's values
+Update-FileContent -FilePath "README.md" -Find "dbadapt" -Replace $GitHubUsername
 Write-Success "README updated"
 
 # Step 5: Update other documentation
@@ -166,6 +169,8 @@ foreach ($file in $docFiles) {
     if (Test-Path $file) {
         Update-FileContent -FilePath $file -Find "YOUR_USERNAME" -Replace $GitHubUsername
         Update-FileContent -FilePath $file -Find "YOUR_REPO" -Replace $RepoName
+        # Also replace template owner's values
+        Update-FileContent -FilePath $file -Find "dbadapt" -Replace $GitHubUsername
     }
 }
 Write-Success "Documentation updated"
