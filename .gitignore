@@ -1,0 +1,77 @@
+# General
+.DS_Store
+.idea/
+.vscode/settings.json
+*.log
+*.tmp
+*~
+*.swp
+
+# OS
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+._*
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+bin/
+*.[oa]
+*.log
+_output/
+_test/
+backend/coverage.out
+backend/coverage.html
+go.work.sum
+
+# Node
+node_modules/
+dist/
+build/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+web/dist/
+web/node_modules/
+
+# Test coverage
+coverage/
+*.lcov
+.nyc_output/
+web/coverage/
+
+# Docker
+docker-compose.override.yml
+
+# Project specific
+backend/tmp/
+.air.toml
+mcp-servers.json
+
+# Build debug artifacts
+backend/*.txt
+backend/backend/
+
+# Template artifacts (remove after init)
+bin/grgn-stack
+bin/test-build
+scripts/backup-grgn-stack.*
+.oiexclude
+
+# Environment files (keep .example files)
+.env
+.env.local
+.env.*.local
+
+# Binaries
+*.exe

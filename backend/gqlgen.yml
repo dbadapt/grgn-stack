@@ -1,0 +1,36 @@
+# gqlgen configuration
+# Docs: https://gqlgen.com/config/
+
+# GraphQL schema location
+schema:
+  - ../schema/*.graphql
+
+# Where to generate the Go types
+model:
+  filename: internal/graphql/model/models_gen.go
+  package: model
+
+# Where to generate the GraphQL resolver interface
+resolver:
+  layout: follow-schema
+  dir: internal/graphql
+  package: graphql
+  filename_template: '{name}.resolvers.go'
+
+# Where to generate the GraphQL executable schema
+exec:
+  filename: internal/graphql/generated.go
+  package: graphql
+
+# Resolver configuration
+# This tells gqlgen not to create a resolver for every type
+# Only create resolvers for Query, Mutation, Subscription
+autobind: []
+
+# Skip validation of schema
+skip_validation: false
+
+# Enable federation (if needed in the future)
+# federation:
+#   filename: internal/graphql/federation.go
+#   package: graphql

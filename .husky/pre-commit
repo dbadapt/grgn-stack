@@ -1,0 +1,8 @@
+# Run lint-staged to check and fix linting on staged files
+npx lint-staged
+
+# Run quick tests (not full coverage)
+echo "Running tests..."
+npm run test:web
+npm run test:go
+

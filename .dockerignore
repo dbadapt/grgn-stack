@@ -1,0 +1,42 @@
+# Build artifacts
+bin/
+dist/
+build/
+
+# Node modules
+node_modules/
+web/node_modules/
+
+# Dependencies
+vendor/
+
+# Temporary files
+tmp/
+*.log
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files
+.env*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Coverage reports
+coverage/
+*.out
+
+# Test files (don't need in production)
+*_test.go
+**/*_test.go

@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+jobs:
+  # Backend testing and linting
+  backend:
+    name: Backend (Go)
+    runs-on: ubuntu-latest
+
+    services:
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/testpassword
+        ports:
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: |
+            backend/go.sum
+            pkg/go.sum
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: go mod download
+
+      - name: Run go fmt
+        working-directory: ./backend
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "Code is not formatted. Run 'go fmt ./...'"
+            gofmt -s -l .
+            exit 1
+          fi
+
+      - name: Run go vet
+        working-directory: ./backend
+        run: go vet ./...
+
+      - name: Run tests
+        working-directory: ./backend
+        run: go test -v -race -coverprofile=coverage.out ./...
+        env:
+          GRGN_STACK_DATABASE_NEO4J_URI: bolt://localhost:7687
+          GRGN_STACK_DATABASE_NEO4J_USERNAME: neo4j
+          GRGN_STACK_DATABASE_NEO4J_PASSWORD: testpassword
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage.out
+          retention-days: 7
+
+  # Frontend testing and linting
+  frontend:
+    name: Frontend (React/TypeScript)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./web
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: ./web
+        run: npm run lint
+
+      - name: Run TypeScript check
+        working-directory: ./web
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        working-directory: ./web
+        run: npm test
+
+      - name: Build
+        working-directory: ./web
+        run: npm run build
+
+  # GraphQL code generation check
+  graphql:
+    name: GraphQL Codegen
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: backend/go.sum
+
+      - name: Install dependencies
+        run: |
+          cd web && npm ci
+          cd ../backend && go mod download
+
+      - name: Generate GraphQL code
+        run: npm run generate
+
+      - name: Check for uncommitted changes
+        run: |
+          git diff --exit-code || (echo "Generated code is not up to date. Run 'npm run generate'" && exit 1)

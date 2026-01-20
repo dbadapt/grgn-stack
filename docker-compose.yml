@@ -1,0 +1,52 @@
+# Base docker-compose configuration
+# Use docker-compose.dev.yml for development
+services:
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - '7474:7474' # HTTP
+      - '7687:7687' # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/devpassword
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q --spider http://localhost:7474 || exit 1']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      - GRGN_STACK_DATABASE_NEO4J_URI=bolt://neo4j:7687
+      - GRGN_STACK_DATABASE_NEO4J_USERNAME=neo4j
+      - GRGN_STACK_DATABASE_NEO4J_PASSWORD=devpassword
+    volumes:
+      - ./backend:/app
+      - ./pkg:/pkg
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  neo4j_data:
+  neo4j_logs:

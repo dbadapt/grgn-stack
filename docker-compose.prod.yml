@@ -1,0 +1,37 @@
+# Production docker-compose configuration
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+# Note: In production, use orchestration (Kubernetes, ECS, etc.)
+services:
+  neo4j:
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PRODUCTION_PASSWORD}
+      - NEO4J_dbms_memory_pagecache_size=2G
+      - NEO4J_dbms_memory_heap_initial__size=2G
+      - NEO4J_dbms_memory_heap_max__size=4G
+    restart: always
+
+  backend:
+    env_file:
+      - .env.production
+    environment:
+      - GRGN_STACK_SERVER_ENVIRONMENT=production
+      - GRGN_STACK_DATABASE_NEO4J_URI=bolt://neo4j:7687
+    restart: always
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  web:
+    env_file:
+      - ./web/.env.production
+    environment:
+      - NODE_ENV=production
+    command: npm run build && npm run preview
+    restart: always
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '3'

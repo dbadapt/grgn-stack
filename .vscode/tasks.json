@@ -1,0 +1,134 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: dev - web",
+      "type": "npm",
+      "script": "dev",
+      "path": "web/",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": "^$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "VITE.*ready in",
+          "endsPattern": "Local:.*http://localhost:5173"
+        }
+      }
+    },
+    {
+      "label": "go: build backend",
+      "type": "shell",
+      "command": "go build -o ../bin/grgn-stack",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "go: run backend",
+      "type": "shell",
+      "command": "go run .",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "go",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting",
+          "endsPattern": "Listening and serving"
+        }
+      }
+    },
+    {
+      "label": "go: test backend",
+      "type": "shell",
+      "command": "go test -v ./...",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "npm: test - web",
+      "type": "npm",
+      "script": "test",
+      "path": "web/",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: build - web",
+      "type": "npm",
+      "script": "build",
+      "path": "web/",
+      "group": "build",
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "docker: compose up dev",
+      "type": "shell",
+      "command": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: compose down",
+      "type": "shell",
+      "command": "docker-compose down",
+      "problemMatcher": []
+    },
+    {
+      "label": "coverage: go backend",
+      "type": "shell",
+      "command": "go test -v -coverprofile=coverage.out ./... && go tool cover -html=coverage.out -o coverage.html",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "test",
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "coverage: web frontend",
+      "type": "npm",
+      "script": "test:coverage",
+      "path": "web/",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run All Tests",
+      "dependsOn": ["go: test backend", "npm: test - web"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Run All Coverage",
+      "dependsOn": ["coverage: go backend", "coverage: web frontend"],
+      "problemMatcher": []
+    }
+  ]
+}

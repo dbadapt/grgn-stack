@@ -1,0 +1,24 @@
+# Development docker-compose configuration
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+services:
+  neo4j:
+    environment:
+      - NEO4J_AUTH=neo4j/devpassword
+      - NEO4J_dbms_memory_pagecache_size=512M
+      - NEO4J_dbms_memory_heap_initial__size=512M
+      - NEO4J_dbms_memory_heap_max__size=1G
+
+  backend:
+    env_file:
+      - .env.development
+    environment:
+      - GRGN_STACK_SERVER_ENVIRONMENT=development
+      - GRGN_STACK_DATABASE_NEO4J_URI=bolt://neo4j:7687
+    command: air # Hot reload with air
+
+  web:
+    env_file:
+      - ./web/.env.development
+    environment:
+      - NODE_ENV=development
+    command: npm run dev

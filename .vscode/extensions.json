@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+    "golang.go",
+    "ms-azuretools.vscode-docker",
+    "neo4j-labs.neo4j-cypher-runner",
+    "graphql.vscode-graphql",
+    "graphql.vscode-graphql-syntax",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "google.gemini-code-assist",
+    "eamodio.gitlens",
+    "rangav.vscode-thunder-client",
+    "ms-vscode-remote.remote-containers",
+    "editorconfig.editorconfig",
+    "tamasfe.even-better-toml",
+    "dsznajder.es7-react-js-snippets",
+    "mantine.mantine-vscode",
+    "neo4j.neo4j-extension-pack",
+    "googlecloudtools.cloudcode",
+    "aaron-bond.better-comments",
+    "geddski.macros"
+  ]
+}

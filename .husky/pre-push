@@ -1,0 +1,16 @@
+# Run before pushing to remote
+echo "Running pre-push checks..."
+
+# Run all tests with coverage thresholds
+echo "Running full test suite..."
+npm run test
+
+# Check if tests passed
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Tests failed! Push aborted."
+    echo "Fix the failing tests before pushing."
+    exit 1
+fi
+
+echo "✅ All pre-push checks passed!"

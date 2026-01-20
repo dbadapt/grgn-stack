@@ -1,0 +1,120 @@
+name: Coverage
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+
+jobs:
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+
+    services:
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/testpassword
+        ports:
+          - 7687:7687
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p testpassword 'RETURN 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Backend Coverage
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache-dependency-path: backend/go.sum
+
+      - name: Run backend tests with coverage
+        working-directory: ./backend
+        run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+        env:
+          GRGN_STACK_DATABASE_NEO4J_URI: bolt://localhost:7687
+          GRGN_STACK_DATABASE_NEO4J_USERNAME: neo4j
+          GRGN_STACK_DATABASE_NEO4J_PASSWORD: testpassword
+
+      - name: Generate backend coverage report
+        working-directory: ./backend
+        run: |
+          go tool cover -func=coverage.out -o coverage.txt
+          cat coverage.txt
+
+      # Frontend Coverage
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: ./web
+        run: npm ci
+
+      - name: Run frontend tests with coverage
+        working-directory: ./web
+        run: npm run test:coverage
+
+      # Upload to Codecov
+      - name: Upload backend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/coverage.out
+          flags: backend
+          name: backend-coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./web/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # Generate coverage summary
+      - name: Coverage Summary
+        run: |
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Backend (Go)" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          cat backend/coverage.txt | tail -1 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Frontend (TypeScript)" >> $GITHUB_STEP_SUMMARY
+          echo "See Codecov report for detailed frontend coverage" >> $GITHUB_STEP_SUMMARY
+
+      # Upload artifacts
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            backend/coverage.out
+            backend/coverage.txt
+            web/coverage/
+          retention-days: 30
+
+      # Check coverage thresholds (frontend enforced by vitest config)
+      - name: Check backend coverage threshold
+        working-directory: ./backend
+        run: |
+          COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+          echo "Backend coverage: ${COVERAGE}%"
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "❌ Backend coverage ${COVERAGE}% is below 70% threshold"
+            exit 1
+          else
+            echo "✅ Backend coverage ${COVERAGE}% meets 70% threshold"
+          fi

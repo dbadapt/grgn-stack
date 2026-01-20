@@ -1,0 +1,92 @@
+{
+  "name": "grgn-stack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GRGN Stack: Go + React + GraphQL + Neo4j full-stack template",
+  "keywords": [
+    "grgn-stack",
+    "golang",
+    "react",
+    "graphql",
+    "neo4j",
+    "full-stack",
+    "template"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "// Development": "",
+    "dev": "npm run docker:up",
+    "dev:backend": "cd backend && go run .",
+    "dev:frontend": "cd web && npm run dev",
+    "start": "npm run dev",
+    "// Building": "",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd backend && go build -o ../bin/app",
+    "build:frontend": "cd web && npm run build",
+    "prebuild": "npm run generate",
+    "// Testing": "",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && go test -v ./...",
+    "test:frontend": "cd web && npm test -- --run",
+    "test:watch": "cd web && npm test",
+    "test:ci": "npm run test:backend && cd web && npm run test -- --run",
+    "// Coverage": "",
+    "coverage": "npm run coverage:backend && npm run coverage:frontend",
+    "coverage:backend": "cd backend && go test -v -coverprofile=coverage.out ./... && go tool cover -html=coverage.out -o coverage.html",
+    "coverage:frontend": "cd web && npm run test:coverage",
+    "// Linting & Formatting": "",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && go vet ./... && gofmt -l .",
+    "lint:frontend": "cd web && npm run lint",
+    "lint:fix": "npm run lint:fix:backend && npm run lint:fix:frontend",
+    "lint:fix:backend": "cd backend && gofmt -w .",
+    "lint:fix:frontend": "cd web && npm run lint:fix",
+    "format": "npm run lint:fix",
+    "// Code Generation": "",
+    "generate": "npm run generate:backend && npm run generate:frontend",
+    "generate:backend": "cd backend && go run github.com/99designs/gqlgen generate",
+    "generate:frontend": "cd web && npm run generate",
+    "// Database": "",
+    "db:migrate": "cd backend && go run ./cmd/migrate",
+    "db:reset": "npm run docker:down && npm run docker:up",
+    "// Docker": "",
+    "docker:up": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "docker:up:detached": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+    "docker:down": "docker-compose down",
+    "docker:down:volumes": "docker-compose down -v",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f",
+    "docker:logs:backend": "docker-compose logs -f backend",
+    "docker:logs:frontend": "docker-compose logs -f web",
+    "docker:logs:db": "docker-compose logs -f neo4j",
+    "docker:restart": "docker-compose restart",
+    "docker:clean": "docker-compose down -v && docker system prune -f",
+    "// Dependencies": "",
+    "install:all": "npm install && cd web && npm install",
+    "update:all": "npm update && cd web && npm update",
+    "clean": "npm run clean:deps && npm run clean:build",
+    "clean:deps": "rm -rf node_modules web/node_modules",
+    "clean:build": "rm -rf bin web/dist backend/coverage.out backend/coverage.html web/coverage",
+    "// CI/CD": "",
+    "ci": "npm run lint && npm run test && npm run build",
+    "validate": "npm run lint && npm run test",
+    "// Utilities": "",
+    "prepare": "husky",
+    "precommit": "lint-staged"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
+  },
+  "lint-staged": {
+    "web/**/*.{ts,tsx}": [
+      "cd web && eslint --fix"
+    ],
+    "backend/**/*.go": [
+      "gofmt -w"
+    ]
+  }
+}

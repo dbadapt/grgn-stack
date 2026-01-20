@@ -1,0 +1,38 @@
+# GraphQL Code Generator Configuration
+# Generates TypeScript types and React Query hooks from GraphQL schema
+
+schema: http://localhost:8080/graphql
+documents:
+  - 'src/**/*.graphql'
+  - 'src/**/*.tsx'
+  - 'src/**/*.ts'
+generates:
+  src/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-query
+    config:
+      # TypeScript options
+      strictScalars: true
+      scalars:
+        Time: string
+        UUID: string
+
+      # React Query options
+      fetcher:
+        endpoint: 'http://localhost:8080/graphql'
+        fetchParams:
+          headers:
+            Content-Type: application/json
+      exposeQueryKeys: true
+      exposeFetcher: true
+      addInfiniteQuery: true
+
+      # Code generation options
+      skipTypename: false
+      enumsAsTypes: true
+
+hooks:
+  afterAllFileWrite:
+    - prettier --write

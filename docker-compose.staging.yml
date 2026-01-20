@@ -1,0 +1,25 @@
+# Staging docker-compose configuration
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.staging.yml up
+services:
+  neo4j:
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_STAGING_PASSWORD}
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms_memory_heap_initial__size=1G
+      - NEO4J_dbms_memory_heap_max__size=2G
+
+  backend:
+    env_file:
+      - .env.staging
+    environment:
+      - GRGN_STACK_SERVER_ENVIRONMENT=staging
+      - GRGN_STACK_DATABASE_NEO4J_URI=bolt://neo4j:7687
+    restart: unless-stopped
+
+  web:
+    env_file:
+      - ./web/.env.staging
+    environment:
+      - NODE_ENV=production
+    command: npm run build && npm run preview
+    restart: unless-stopped
