@@ -218,7 +218,7 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Documentation
 
-> **Development Focus:** 🚀 MVC Platform Implementation (See [mvc_design.md](backend/mvc_design.md))
+> **Development Focus:** 🚀 MVC Platform Implementation (See [mvc_design.md](mvc_design.md))
 
 ### Getting Started
 
@@ -226,7 +226,7 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 - **[USING-TEMPLATE.md](USING-TEMPLATE.md)** - Quick template usage reference
 - **[QUICK-REFERENCE.md](QUICK-REFERENCE.md)** - ⚡ Command cheat sheet
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - 🏗️ System architecture & data flow
-- **[backend/mvc_design.md](backend/mvc_design.md)** - 🚀 MVC Platform Implementation Specification (CURRENT FOCUS)
+- **[mvc_design.md](mvc_design.md)** - 🚀 MVC Platform Implementation Specification (CURRENT FOCUS)
 
 ### Development Guides
 
@@ -249,7 +249,7 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Project Structure
 
-> **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](backend/mvc_design.md)).
+> **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](mvc_design.md)).
 
 ```
 ├── backend/                 # Go backend

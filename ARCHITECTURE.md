@@ -2,7 +2,7 @@
 
 Visual overview of the GRGN Stack architecture and how components interact.
 
-> **Note:** For the formalized MVC platform implementation specification, domain isolation policies, and internal SDK patterns, please refer to the primary design document: **[backend/mvc_design.md](backend/mvc_design.md)** (Current Development Focus 🚀).
+> **Note:** For the formalized MVC platform implementation specification, domain isolation policies, and internal SDK patterns, please refer to the primary design document: **[mvc_design.md](mvc_design.md)** (Current Development Focus 🚀).
 
 ---
 
@@ -143,7 +143,7 @@ web/
 
 ### Backend (Go) - Modular Monolith
 
-> See [mvc_design.md](backend/mvc_design.md) Section 3 for complete file layout.
+> See [mvc_design.md](mvc_design.md) Section 3 for complete file layout.
 
 ```
 backend/
@@ -260,7 +260,7 @@ schema/
 
 ### Layer 3: Backend (MVC Pattern)
 
-> See [mvc_design.md](backend/mvc_design.md) Section 5 for MVC details.
+> See [mvc_design.md](mvc_design.md) Section 5 for MVC details.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -323,7 +323,7 @@ schema/
 
 ## 🔄 Code Generation Flow
 
-> See [mvc_design.md](backend/mvc_design.md) Section 10 for complete generation details.
+> See [mvc_design.md](mvc_design.md) Section 10 for complete generation details.
 
 ```
 ┌──────────────────────┐   ┌──────────────────────┐
@@ -554,7 +554,7 @@ Frontend
 
 ## 🎯 Key Design Principles
 
-> See [mvc_design.md](backend/mvc_design.md) Section 2 for detailed principles.
+> See [mvc_design.md](mvc_design.md) Section 2 for detailed principles.
 
 1. **MVC Pattern (Redefined)**
    - **Model**: Declarative GraphQL schemas (.graphql files)
@@ -599,4 +599,4 @@ Frontend
 
 ---
 
-This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities. For the complete specification, see **[backend/mvc_design.md](backend/mvc_design.md)**.
+This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities. For the complete specification, see **[mvc_design.md](mvc_design.md)**.

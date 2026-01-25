@@ -1,6 +1,6 @@
 # GRGN Stack Architecture Design
 
-> **Version:** 2.0 (2026-01-25)
+> **Version:** 2.3 (2026-01-25)
 > **Status:** Design Specification
 > **Development Focus:** 🚀 MVC Platform Implementation
 > **Stack:** Go + React + GraphQL + Neo4j
@@ -2295,3 +2295,4 @@ architecture:
 | 2.0 | 2026-01-25 | - | Formalized architecture specification |
 | 2.1 | 2026-01-25 | - | Made domain isolation configurable (developer choice) |
 | 2.2 | 2026-01-25 | - | Added Database Schema Management (golang-migrate, Section 11) |
+| 2.3 | 2026-01-25 | - | Relocated design document to project root |
