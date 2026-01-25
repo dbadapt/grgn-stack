@@ -78,7 +78,7 @@ function Update-AllFiles {
     param(
         [string]$Find,
         [string]$Replace,
-        [string[]]$Extensions = @("*.md", "*.go", "*.json", "*.yml", "*.yaml", "*.ts", "*.tsx", "*.graphql")
+        [string[]]$Extensions = @("*.md", "*.go", "*.mod", "*.json", "*.yml", "*.yaml", "*.ts", "*.tsx", "*.graphql")
     )
 
     foreach ($ext in $Extensions) {

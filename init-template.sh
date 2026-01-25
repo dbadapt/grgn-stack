@@ -109,7 +109,7 @@ replace_in_all_files() {
     local find="$1"
     local replace="$2"
 
-    find . -type f \( -name "*.md" -o -name "*.go" -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" -o -name "*.ts" -o -name "*.tsx" -o -name "*.graphql" \) \
+    find . -type f \( -name "*.md" -o -name "*.go" -o -name "*.mod" -o -name "*.json" -o -name "*.yml" -o -name "*.yaml" -o -name "*.ts" -o -name "*.tsx" -o -name "*.graphql" \) \
         -not -path "./node_modules/*" \
         -not -path "./web/node_modules/*" \
         -not -path "./.git/*" \
