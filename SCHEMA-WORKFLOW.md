@@ -11,7 +11,7 @@ This document describes the collaborative workflow for designing and implementin
 GRGN Stack uses **two interconnected schemas**:
 
 1. **Neo4j Graph Schema** (DATABASE.md) - Nodes and relationships in the graph database
-2. **GraphQL Schema** (schema/schema.graphql) - API types and operations
+2. **GraphQL Schema** (colocated in services/**/model/) - API types and operations
 
 Both must stay in sync, but serve different purposes:
 
@@ -34,7 +34,7 @@ Both must stay in sync, but serve different purposes:
 
 2. **Save Your Designs**
    - Export as JSON from Arrows.app
-   - Save to `schema/graph-models/[descriptive-name].json`
+   - Save to `services/{domain}/{app}/model/[descriptive-name].json`
    - Commit to git for version control
 
 3. **Share Context with Copilot**
@@ -46,12 +46,12 @@ Both must stay in sync, but serve different purposes:
 
 **Copilot will:**
 
-1. **Read your Arrows.app JSON** from `schema/graph-models/`
+1. **Read your Arrows.app JSON** from `services/{domain}/{app}/model/`
 2. **Update DATABASE.md** with formal documentation
-3. **Create/Update GraphQL Schema** in `schema/schema.graphql`
-4. **Generate Migration Files** in `backend/internal/database/migrations/`
-5. **Implement Resolvers** in `backend/internal/graphql/resolver/`
-6. **Generate Repository Code** in `backend/internal/repository/`
+3. **Create/Update GraphQL Schemas** in `services/{domain}/{app}/model/*.graphql`
+4. **Generate Migration Files** in `services/{domain}/{app}/migrations/` (or central root `migrations/`)
+5. **Implement Resolvers** in `services/{domain}/{app}/controller/resolver.go`
+6. **Generate Repository Code** in `services/{domain}/{app}/controller/generated/`
 
 ---
 
@@ -75,7 +75,7 @@ Both must stay in sync, but serve different purposes:
    - `User` -[:AUTHENTICATED_BY]-> `AuthProvider`
    - Add properties: linkedAt, isPrimary
 
-4. Export as JSON → Save to `schema/graph-models/auth-providers.json`
+4. Export as JSON → Save to `services/core/auth/model/auth-providers.json`
 
 ### Step 2: Tell Copilot
 
@@ -83,11 +83,11 @@ In chat or comment:
 
 ```
 I've created a new graph model for authentication providers in
-schema/graph-models/auth-providers.json. Please:
+services/core/auth/model/auth-providers.json. Please:
 
 1. Read the arrows.app model
 2. Update DATABASE.md with the new nodes/relationships
-3. Add AuthProvider type to schema.graphql
+3. Add AuthProvider type to services/core/auth/model/types.graphql
 4. Create a migration for the auth provider constraints
 5. Generate repository methods for linking auth providers
 ```
@@ -155,12 +155,12 @@ Copilot will:
 
 | Purpose             | Location                                    | Who Updates      | Format      |
 | ------------------- | ------------------------------------------- | ---------------- | ----------- |
-| Visual models       | `schema/graph-models/*.json`                | You (Arrows.app) | JSON        |
+| Visual models       | `services/{domain}/{app}/model/*.json`      | You (Arrows.app) | JSON        |
 | Graph documentation | `DATABASE.md`                               | Copilot          | Markdown    |
-| GraphQL schema      | `schema/schema.graphql`                     | Copilot          | GraphQL SDL |
-| Migrations          | `backend/internal/database/migrations/*.go` | Copilot          | Go          |
-| Resolvers           | `backend/internal/graphql/resolver/*.go`    | Copilot          | Go          |
-| Repositories        | `backend/internal/repository/*.go`          | Copilot          | Go          |
+| GraphQL schemas     | `services/{domain}/{app}/model/*.graphql`   | Copilot          | GraphQL SDL |
+| Migrations          | `services/{domain}/{app}/migrations/*.go`   | Copilot          | Go          |
+| Resolvers           | `services/{domain}/{app}/controller/*.go`   | Copilot          | Go          |
+| Repositories        | `services/{domain}/{app}/controller/gen/...`| Copilot          | Go          |
 
 ---
 
@@ -270,11 +270,11 @@ Be specific about:
 **Example:**
 
 ```
-I've added a ScavengerHunt model in schema/graph-models/scavenger-hunt.json.
+I've added a ScavengerHunt model in services/twitter/tweet/model/scavenger-hunt.json.
 It has checkpoints that users can scan. Each checkpoint has points and order.
 Please:
 1. Create migration for ScavengerHunt and Checkpoint nodes
-2. Add to GraphQL schema with queries for active hunts
+2. Add to GraphQL schemas with queries for active hunts
 3. Implement repository methods for creating hunts and tracking progress
 4. Add tests for progress tracking logic
 ```
@@ -391,12 +391,12 @@ query {
 1. **Create Core Model**
    - Open Arrows.app
    - Import existing User structure or create new
-   - Save as `schema/graph-models/core-model.json`
+   - Save as `services/core/shared/model/core-model.json`
 
 2. **Design Auth Providers**
    - Add AuthProvider nodes
    - Link to Users
-   - Save as `schema/graph-models/auth-model.json`
+   - Save as `services/core/auth/model/auth-model.json`
 
 3. **Implement Database Instance**
    - Add Neo4j to docker-compose

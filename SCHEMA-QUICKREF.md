@@ -10,7 +10,7 @@
 1. Open https://arrows.app
 2. Import existing model or create new
 3. Design nodes and relationships
-4. Export → Save JSON to schema/graph-models/
+4. Export → Save JSON to services/{domain}/{app}/model/
 5. Tell Copilot: "I've updated X model, implement it"
 6. Copilot generates code across all layers
 ```
@@ -22,15 +22,15 @@
 ### Visual Design: Arrows.app
 
 - **URL:** https://arrows.app
-- **Import:** Open → From file → select `.json` from `schema/graph-models/`
+- **Import:** Open → From file → select `.json` from `services/{domain}/{app}/model/`
 - **Export:** Save → Download JSON → overwrite file
 
 ### Starter Models (Ready to Import!)
 
-- ✅ `core-model.json` - User & basic entities
-- ✅ `auth-model.json` - Auth providers & MFA
+- ✅ `services/core/shared/model/core-model.json` - User & basic entities
+- ✅ `services/core/auth/model/auth-model.json` - Auth providers & MFA
 
-> 💡 **Tip:** Add your own models to `schema/graph-models/` as you design them!
+> 💡 **Tip:** Add your own models to your app's `model/` directory as you design them!
 
 ---
 
@@ -38,12 +38,12 @@
 
 When you tell Copilot to implement:
 
-1. **Reads** your JSON model from `schema/graph-models/`
+1. **Reads** your JSON model from `services/{domain}/{app}/model/`
 2. **Updates** DATABASE.md documentation
-3. **Generates** GraphQL schema in `schema/schema.graphql`
-4. **Creates** migration files in `backend/internal/database/migrations/`
-5. **Implements** repositories in `backend/internal/repository/`
-6. **Writes** resolvers in `backend/internal/graphql/resolver/`
+3. **Generates** GraphQL schema in `services/{domain}/{app}/model/*.graphql`
+4. **Creates** migration files in `services/{domain}/{app}/migrations/` (or root `migrations/` for core)
+5. **Implements** repositories in `services/{domain}/{app}/controller/generated/`
+6. **Writes** resolvers in `services/{domain}/{app}/controller/resolver.go`
 
 ---
 
@@ -186,20 +186,15 @@ User progress through checkpoints
 ## 📂 File Structure
 
 ```
-schema/
-├── schema.graphql               ← GraphQL API schema (Copilot)
-└── graph-models/                ← Visual models (You)
-    ├── README.md
-    ├── core-model.json          ← User entity
-    └── auth-model.json          ← Authentication providers
-
-backend/
-├── internal/
-│   ├── database/
-│   │   └── migrations/          ← Schema changes (Copilot)
-│   ├── repository/              ← Data access (Copilot)
-│   └── graphql/
-│       └── resolver/            ← API logic (Copilot)
+services/
+├── {domain}/
+│   └── {app}/
+│       ├── model/               ← Visual models & GraphQL schemas
+│       │   ├── {app}-model.json
+│       │   └── types.graphql
+│       ├── view/                ← React components & UI (web/)
+│       ├── migrations/          ← Schema changes (Copilot)
+│       └── controller/          ← API logic & repositories (Copilot)
 ```
 
 ---
@@ -213,7 +208,7 @@ backend/
 start https://arrows.app
 
 # Import core model
-# Open → From file → schema/graph-models/core-model.json
+# Open → From file → services/core/shared/model/core-model.json
 ```
 
 ### 2. Make a Simple Edit

@@ -252,41 +252,33 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 > **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](mvc_design.md)).
 
 ```
-├── backend/                 # Go backend
-│   ├── cmd/                # CLI commands (grgn, migrate, etc.)
-│   ├── internal/           # Modular Monolith Domains
-│   │   ├── core/           # Infrastructure Domains (Shared, Auth, Tenant)
-│   │   └── {product}/      # Product Domains (e.g., twitter, commerce)
-│   ├── pkg/                # Standalone importable Go packages
-│   ├── main.go             # Application entry point
-│   └── gqlgen.yml          # GraphQL codegen config
-├── web/                    # React frontend
-│   ├── src/
-│   │   ├── domains/        # Domain-specific UI components
-│   │   ├── graphql/        # GraphQL queries & generated code
-│   │   └── config/         # Environment configuration
-│   └── vite.config.ts
-├── schema/                 # Shared schema definitions
-│   ├── schema.graphql      # GraphQL API schema
-│   └── graph-models/       # Visual Neo4j models (Arrows.app)
-├── scripts/                # Utility scripts
-├── .github/workflows/      # CI/CD workflows
-└── docker-compose*.yml     # Docker configurations
+/
+├── cmd/                        # ENTRY POINTS (server, migrate, worker, grgn)
+├── pkg/                        # STANDALONE PACKAGES (config, sdk, testing)
+├── migrations/                 # CENTRAL INFRASTRUCTURE MIGRATIONS
+├── services/                   # MODULAR MONOLITH DOMAINS
+│   ├── core/                   # INFRASTRUCTURE DOMAINS (Shared, Auth, Tenant)
+│   └── {product}/              # PRODUCT DOMAINS (e.g., twitter, commerce)
+│       └── {app}/              # INDIVIDUAL APPS
+│           ├── model/          # GraphQL Schemas & Data Models
+│           ├── view/           # React Components & Job Handlers
+│           └── controller/     # Business Logic & Resolvers
+├── go.mod                      # Go module definition
+└── package.json                # Project-wide CLI scripts
 ```
 
 ## Database Migrations
 
 ```bash
-# Run migrations
-cd backend
-go run ./cmd/migrate
+# Run migrations via grgn CLI
+grgn migrate
 
 # Create new migration
-# Add new file: backend/internal/database/migrations/00X_description.go
-# Follow pattern in 001_initial_schema.go
+grgn migrate:create {domain}/{app} {description}
 ```
 
 See [DATABASE.md](DATABASE.md) for schema design guide.
+
 
 ## Environment Configuration
 

@@ -13,7 +13,7 @@ This template uses Neo4j graph database to model users, authentication, and doma
 - Online tool: https://arrows.app
 - Create and save graph models as JSON
 - Export to Cypher for implementation
-- Save designs in `/schema/graph-models/` directory
+- Save designs in `services/{domain}/{app}/model/` directory
 
 ### Neo4j Browser
 
@@ -148,8 +148,8 @@ ORDER BY a.createdAt
 ### Adding Your Domain Nodes
 
 1. **Design visually** in [Arrows.app](https://arrows.app)
-2. **Export JSON** to `schema/graph-models/your-model.json`
-3. **Create migration** in `backend/internal/database/migrations/`
+2. **Export JSON** to `services/{domain}/{app}/model/your-model.json`
+3. **Create migration** in `services/{domain}/{app}/migrations/` (or root `migrations/` for core)
 4. **Update this document** with your new nodes
 
 ### Example: Adding a Post Node
@@ -239,12 +239,12 @@ RETURN u, a
 
 ## Migrations
 
-Migrations are located in `backend/internal/database/migrations/`.
+Migrations are located in `services/{domain}/{app}/migrations/` (or root `migrations/` for core).
 
 ### Current Migrations
 
-- ✅ `001_initial_schema.go` - User node with basic constraints
+- ✅ `000001_initial_schema.go` - User node with basic constraints
 
 ### Creating New Migrations
 
-See [migrations README](backend/internal/database/migrations/README.md) for instructions.
+See [Database Schema Management](mvc_design.md#11-database-schema-management) for instructions.

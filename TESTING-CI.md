@@ -202,7 +202,7 @@ npm test
 
 ```bash
 npm run generate
-git add backend/internal/graphql web/src/graphql
+git add services/**/controller/generated services/**/view/web
 git commit -m "chore: update generated GraphQL code"
 ```
 

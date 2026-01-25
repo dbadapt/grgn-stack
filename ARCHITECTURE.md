@@ -14,17 +14,16 @@ Visual overview of the GRGN Stack architecture and how components interact.
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌──────────────┐      ┌──────────────┐      ┌──────────────┐ │
-│  │              │      │              │      │              │ │
-│  │   Frontend   │◄────►│   Backend    │◄────►│   Database   │ │
-│  │   (React)    │      │     (Go)     │      │   (Neo4j)    │ │
+│  │   Frontend   │◄────►│   Services   │◄────►│   Database   │ │
+│  │ (Distributed)│      │ (Mod Monolith)│      │   (Neo4j)    │ │
 │  │              │      │              │      │              │ │
 │  └──────────────┘      └──────────────┘      └──────────────┘ │
 │       │                      │                      │          │
 │   TypeScript            GraphQL API            Graph Schema     │
-│   Mantine UI            Gin Framework          Cypher Queries   │
-│   TanStack Query        gqlgen                 Migrations       │
+│   React Components      MVC Pattern            Cypher Queries   │
+│   TanStack Query        grgn CLI               Migrations       │
 │       │                      │                      │          │
-│   Port 5173             Port 8080               Port 7687       │
+│   Vite Dev              Go 1.24+               Neo4j Fabric     │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -38,13 +37,13 @@ Visual overview of the GRGN Stack architecture and how components interact.
 ```
 User Interaction
       ↓
-VIEW: React Component (web/src/domains/)
+VIEW: React Component (services/{domain}/{app}/view/web/)
       ↓
 TanStack Query Hook
       ↓
 GraphQL Query (auto-generated)
       ↓
-HTTP Request → Backend :8080/graphql
+HTTP Request → API Gateway (cmd/server/)
       ↓
 CONTROLLER: GraphQL Resolver (resolver.go)
       ↓
@@ -54,9 +53,9 @@ Core Services (via Internal SDK interfaces)
       ↓
 Repository Layer (generated/)
       ↓
-Neo4j Driver (core/shared/controller/database.go)
+Neo4j Driver (services/core/shared/controller/database.go)
       ↓
-Cypher Query → Neo4j :7687
+Cypher Query → Neo4j Fabric
       ↓
 Graph Data
       ↓
@@ -78,7 +77,7 @@ TanStack Mutation Hook
       ↓
 GraphQL Mutation (auto-generated)
       ↓
-HTTP POST → Backend :8080/graphql
+HTTP POST → API Gateway
       ↓
 CONTROLLER: GraphQL Resolver (resolver.go)
       ↓
@@ -103,126 +102,59 @@ VIEW: Cache Invalidation → UI Update
 
 ---
 
-## 📁 Layer Architecture
-
-### Frontend (React)
-
-```
-web/
-│
-├── src/
-│   ├── App.tsx              # Application root
-│   │
-│   ├── domains/             # Domain-specific UI (mirrors backend)
-│   │   └── {product}/          # e.g., twitter/
-│   │       ├── components/        # Domain components
-│   │       └── pages/             # Domain pages
-│   │
-│   ├── components/          # Global reusable UI components
-│   │   └── *.tsx               # (inherits from core/shared/view/web)
-│   │
-│   ├── pages/              # Global page components
-│   │   └── *.tsx
-│   │
-│   ├── graphql/            # GraphQL queries & generated code
-│   │   ├── queries.graphql     # Hand-written queries
-│   │   └── generated.ts        # Auto-generated types & hooks
-│   │
-│   ├── config/             # Configuration
-│   │   └── env.ts              # Environment variables
-│   │
-│   ├── hooks/              # Custom React hooks
-│   │   └── *.ts
-│   │
-│   ├── utils/              # Utility functions
-│   │   └── *.ts
-│   │
-│   └── test/               # Test utilities
-│       └── setup.ts
-```
-
-### Backend (Go) - Modular Monolith
+## 📁 Project Structure
 
 > See [mvc_design.md](mvc_design.md) Section 3 for complete file layout.
 
 ```
-backend/
-│
-├── main.go                     # Application entry point
-│
-├── cmd/                        # Command-line tools
+/
+├── cmd/                        # ENTRY POINTS
 │   ├── grgn/                   # GRGN CLI tool
-│   ├── server/                 # HTTP server
+│   ├── server/                 # HTTP server (main.go)
 │   ├── migrate/                # Migration runner
 │   └── worker/                 # Background job runner
 │
-├── internal/                   # Modular Monolith Domains
+├── pkg/                        # STANDALONE PACKAGES
+│   ├── config/                 # Configuration management
+│   ├── grgn/                   # Core interfaces
+│   └── testing/                # Test utilities
+│
+├── migrations/                 # CENTRAL INFRASTRUCTURE MIGRATIONS
+│   └── *.cypher / *.go         # golang-migrate files
+│
+├── services/                   # MODULAR MONOLITH DOMAINS
 │   │
 │   ├── core/                   # INFRASTRUCTURE DOMAIN
 │   │   ├── shared/             # Global infra (DB, mailer, cache)
 │   │   │   ├── model/          # Shared GraphQL scalars
-│   │   │   ├── view/           # Base components, admin UI
+│   │   │   ├── view/           # Base components (React), admin UI
 │   │   │   └── controller/     # SDK implementations
 │   │   ├── auth/               # Identity & access
-│   │   │   ├── model/          # CoreAuthUser, Session
-│   │   │   ├── view/           # Login UI, CLI tools
-│   │   │   └── controller/     # Auth handlers
 │   │   ├── tenant/             # Multi-tenancy
 │   │   └── directory/          # Users, Groups, ACLs
 │   │
 │   └── {product}/              # PRODUCT DOMAINS (e.g., twitter)
 │       ├── shared/             # Product-specific utils
 │       └── {app}/              # Individual apps (e.g., tweet, timeline)
-│           ├── model/          # GraphQL types (.graphql)
-│           ├── view/           # Web, CLI, Jobs
+│           ├── model/          # GraphQL schemas (.graphql)
+│           ├── view/           # Web UI (React), CLI, Jobs
 │           ├── controller/     # Business logic, resolvers
 │           └── generated/      # Code generation output
 │
-└── migrations/                 # Central core migrations
-    └── *.cypher / *.go         # golang-migrate files
-```
-
-### Standalone Packages (pkg/)
-
-```
-pkg/
-│
-├── config/                 # Configuration management
-│   └── config.go              # uber-go/config + Viper
-│
-├── grgn/                   # Core interfaces (importable by external projects)
-│   ├── auth.go                # IAuthService interface
-│   ├── tenant.go              # ITenantService interface
-│   ├── mailer.go              # IMailer interface
-│   └── errors.go              # Standard error types
-│
-└── testing/                # Test utilities
-    └── mocks/                 # Interface mocks
-```
-
-### Shared Schema
-
-```
-schema/
-│
-├── schema.graphql          # GraphQL API schema
-│                              (Single source of truth)
-│
-└── graph-models/           # Visual graph models
-    ├── *.json                 # Arrows.app exports
-    └── README.md
+├── go.mod                      # Go module definition
+└── package.json                # Project-wide CLI scripts
 ```
 
 ---
 
 ## 🔌 Technology Layers
 
-### Layer 1: Frontend (Presentation)
+### Layer 1: Frontend (Presentation - Distributed)
 
 ```
 ┌─────────────────────────────────────────────┐
 │  React Components (Mantine UI)              │
-│  ├─ Buttons, Forms, Tables, etc.            │
+│  ├─ Colocated in services/{domain}/{app}/   │
 │  └─ Responsive, accessible, themeable       │
 └─────────────────────────────────────────────┘
                  ▼
@@ -245,26 +177,25 @@ schema/
 
 ```
 ┌─────────────────────────────────────────────┐
-│  GraphQL Schema (schema.graphql)            │
-│  ├─ Types, Queries, Mutations               │
-│  ├─ Input types, Enums                      │
-│  └─ Single source of truth                  │
+│  GraphQL Schemas (Colocated)                │
+│  ├─ services/{domain}/{app}/model/          │
+│  ├─ scalars.graphql (shared)                │
+│  └─ Federated single source of truth        │
 └─────────────────────────────────────────────┘
                  ▼
 ┌─────────────────────────────────────────────┐
 │  Code Generation                            │
-│  ├─ Backend: gqlgen → Go types/resolvers   │
-│  └─ Frontend: graphql-codegen → TS types   │
+│  ├─ grgn generate orchestrates all layers   │
+│  ├─ Backend: gqlgen → Go types/resolvers    │
+│  └─ Frontend: graphql-codegen → TS types    │
 └─────────────────────────────────────────────┘
 ```
 
 ### Layer 3: Backend (MVC Pattern)
 
-> See [mvc_design.md](mvc_design.md) Section 5 for MVC details.
-
 ```
 ┌─────────────────────────────────────────────┐
-│  Gin HTTP Server                            │
+│  Gin HTTP Server (cmd/server/)              │
 │  ├─ Routing                                 │
 │  ├─ Middleware (auth, tenant, logging)      │
 │  └─ GraphQL endpoint handler                │
@@ -305,25 +236,23 @@ schema/
 
 ```
 ┌─────────────────────────────────────────────┐
-│  Neo4j Driver                               │
+│  Neo4j Driver (shared controller)           │
 │  ├─ Connection pooling                      │
 │  ├─ Session management                      │
 │  └─ Cypher execution                        │
 └─────────────────────────────────────────────┘
                  ▼
 ┌─────────────────────────────────────────────┐
-│  Neo4j Graph Database                       │
+│  Neo4j Fabric                               │
 │  ├─ Nodes (entities)                        │
 │  ├─ Relationships (connections)             │
-│  └─ Properties (attributes)                 │
+│  └─ Multi-tenant isolation                  │
 └─────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 🔄 Code Generation Flow
-
-> See [mvc_design.md](mvc_design.md) Section 10 for complete generation details.
 
 ```
 ┌──────────────────────┐   ┌──────────────────────┐
@@ -333,8 +262,8 @@ schema/
           │                         │
           ▼                         │
 ┌──────────────────────┐            │
-│  graph-models/*.json │            │
-│  (Export to repo)    │────────────┤
+│  {app}-model.json    │            │
+│  (Colocated in repo) │────────────┤
 └──────────────────────┘            │
                                     ▼
                         ┌──────────────────────┐
@@ -369,8 +298,8 @@ schema/
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
-│  │  web         │  │  backend     │  │  neo4j       │ │
-│  │              │  │              │  │              │ │
+│  │  web         │  │  services    │  │  neo4j       │ │
+│  │ (Distributed)│  │ (Mod Monolith)│  │ (Fabric)     │ │
 │  │  Node:18     │  │  golang:1.24 │  │  neo4j:5     │ │
 │  │  Vite Dev    │  │  Gin Server  │  │  Database    │ │
 │  │              │  │              │  │              │ │
@@ -389,14 +318,16 @@ schema/
 ```
 Host                     Container
 ────────────────────     ──────────────────
-./web/src         →      /app/src          (live reload)
-./backend         →      /app              (hot reload)
-neo4j_data        →      /data             (persistence)
+./services/*/view/web →  /app/src          (live reload)
+./services           →   /app/services     (hot reload)
+./pkg                →   /app/pkg
+./cmd                →   /app/cmd
+neo4j_data           →   /data             (persistence)
 ```
 
 ---
 
-## 🔐 Authentication Flow (Future)
+## 🔐 Authentication Flow
 
 ```
 User
@@ -405,7 +336,7 @@ User
   │     │
   │     └─► OAuth Flow
   │           │
-  │           └─► Google Auth
+  │           └─► Core Auth Service (services/core/auth)
   │                 │
   │                 └─► JWT Token
   │                       │
@@ -415,11 +346,11 @@ User
         │
         └─► Cookie attached
               │
-              └─► Backend validates JWT
+              └─► API Gateway validates JWT
                     │
                     ├─ Valid → Process request
                     │            │
-                    │            └─► Access Neo4j with user context
+                    │            └─► Access Neo4j Fabric with user context
                     │
                     └─ Invalid → Return 401
 ```
@@ -429,7 +360,7 @@ User
 ## 📊 Schema Design Workflow
 
 ```
-Developer                    Arrows.app              Copilot/AI
+Developer                    Arrows.app              grgn CLI
     │                            │                        │
     │  1. Design visually        │                        │
     ├──────────────────────────► │                        │
@@ -437,14 +368,13 @@ Developer                    Arrows.app              Copilot/AI
     │  2. Export JSON            │                        │
     │ ◄──────────────────────────┤                        │
     │                            │                        │
-    │  3. Save to repo           │                        │
-    │  (schema/graph-models/)    │                        │
+    │  3. Save to app model      │                        │
+    │  (services/{domain}/{app}) │                        │
     │                            │                        │
-    │  4. Tell Copilot           │                        │
+    │  4. Run grgn generate      │                        │
     ├─────────────────────────────────────────────────────►│
-    │  "Implement model X"       │                        │
     │                            │                        │
-    │                            │  5. Read JSON          │
+    │                            │  5. Read model/ JSON   │
     │                            │  6. Generate:          │
     │                            │     - Migrations       │
     │                            │     - GraphQL schema   │
@@ -463,25 +393,18 @@ Developer                    Arrows.app              Copilot/AI
 ```
 ┌─────────────────────────────────────────────┐
 │  Frontend Tests (Vitest)                    │
-│  ├─ Component tests                         │
-│  ├─ Hook tests                              │
+│  ├─ Component tests (Colocated)              │
+│  ├─ Hook tests (services/**/view/web)       │
 │  ├─ Integration tests                       │
 │  └─ Mock GraphQL responses                  │
 └─────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────┐
 │  Backend Tests (Go testing)                 │
-│  ├─ Unit tests (repositories)               │
+│  ├─ Unit tests (services/**/controller)     │
 │  ├─ Integration tests (resolvers)           │
 │  ├─ Database tests (with test Neo4j)        │
 │  └─ Table-driven tests                      │
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│  E2E Tests (Future)                         │
-│  ├─ Full user flows                         │
-│  ├─ Real database                           │
-│  └─ Browser automation                      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -497,9 +420,8 @@ GitHub Repository
       │
       ├─► GitHub Actions (CI)
       │      │
-      │      ├─ Run backend tests
-      │      ├─ Run frontend tests
-      │      ├─ Check linting
+      │      ├─ Run all domain tests
+      │      ├─ Check architecture rules
       │      ├─ Build Docker images
       │      └─ Calculate coverage
       │
@@ -508,10 +430,6 @@ GitHub Repository
              ├─ Build production images
              ├─ Push to container registry
              └─ Deploy to environment
-                   │
-                   ├─ Development
-                   ├─ Staging
-                   └─ Production
 ```
 
 ---
@@ -525,29 +443,28 @@ GitHub Repository
                          │
         ┌────────────────┼────────────────┐
         ▼                ▼                ▼
-    Backend 1        Backend 2        Backend 3
+    Service Node 1   Service Node 2   Service Node 3
         │                │                │
         └────────────────┼────────────────┘
                          ▼
-                   Neo4j Cluster
-                 (Causal Cluster)
+                   Neo4j Fabric Cluster
 ```
 
 ### Caching Strategy
 
 ```
-Frontend
+Frontend (Distributed)
     │
     └─► TanStack Query Cache (in-memory)
             │
             └─► HTTP Request
                     │
                     ▼
-                Backend
+                Service Layer
                     │
-                    ├─► Redis Cache (future)
+                    ├─► Core Cache Service (services/core/shared)
                     │
-                    └─► Neo4j Database
+                    └─► Neo4j Fabric
 ```
 
 ---
@@ -557,45 +474,32 @@ Frontend
 > See [mvc_design.md](mvc_design.md) Section 2 for detailed principles.
 
 1. **MVC Pattern (Redefined)**
-   - **Model**: Declarative GraphQL schemas (.graphql files)
-   - **View**: Web, CLI, Jobs, Mobile (not just HTML)
-   - **Controller**: Business logic, resolvers, policies
+   - **Model**: Declarative GraphQL schemas colocated in each app.
+   - **View**: Distributed React components, CLI tools, Background jobs.
+   - **Controller**: Business logic handlers and policies.
 
 2. **Internal SDK Pattern**
-   - Product domains consume core services via interfaces
-   - Never call external drivers directly
-   - Single point of change for infrastructure swaps
+   - Product domains consume core services via interfaces.
+   - Decoupled from external drivers.
 
 3. **Domain Isolation (Configurable)**
-   - `strict` / `relaxed` / `open` / `custom` policies
-   - Developer-defined in `service_config.yaml`
-   - Validated by `grgn` CLI
+   - Enforced by `grgn` CLI based on developer policy.
+   - No illegal cross-product imports.
 
 4. **Type Safety**
-   - TypeScript on frontend
-   - Go on backend
-   - GraphQL schema as contract
-   - Domain-prefixed types prevent collisions
+   - End-to-end type safety from Graph → Go → GraphQL → TypeScript.
 
 5. **Configuration Locality**
-   - Each app has `service_config.yaml`
-   - Hierarchical inheritance (uber-go/config)
-   - No giant global config file
+   - Each app owns its configuration.
 
 6. **Schema-First Development**
-   - GraphQL schemas are single source of truth
-   - Code generation for types, resolvers, repositories
-   - Visual design with Arrows.app
+   - Single source of truth colocated with logic.
 
 7. **Multi-Tenancy by Design**
-   - Configurable isolation (property vs database)
-   - Neo4j Fabric for cross-database queries
-   - Tenant context middleware
+   - Configurable isolation via property or dedicated database.
 
 8. **CLI-Driven Development**
-   - `grgn` CLI for scaffolding, validation, deployment
-   - `grgn make:*` for code generation
-   - `grgn migrate` for schema management (golang-migrate)
+   - Standardized workflows via `grgn` CLI.
 
 ---
 

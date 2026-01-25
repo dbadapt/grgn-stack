@@ -220,7 +220,7 @@ VITE_ENVIRONMENT=development
 
    ```bash
    # Save to:
-   schema/graph-models/your-model.json
+   services/{domain}/{app}/model/your-model.json
    ```
 
 3. **Generate code**
@@ -359,18 +359,17 @@ docker-compose restart neo4j
 
 ### Add New GraphQL Type
 
-1. Edit `schema/schema.graphql`
-2. Run `npm run generate:backend`
-3. Implement resolver in `backend/internal/graphql/resolver/`
-4. Run `npm run generate:frontend`
-5. Use in React components
+1. Edit `services/{domain}/{app}/model/types.graphql`
+2. Run `grgn generate:backend`
+3. Implement resolver in `services/{domain}/{app}/controller/resolver.go`
+4. Run `grgn generate:frontend`
+5. Use in React components (distributed in services/)
 
 ### Add Database Migration
 
-1. Create file in `backend/internal/database/migrations/`
-2. Implement `Migration` interface
-3. Register in `registry.go`
-4. Run migration script
+1. Create file in `services/{domain}/{app}/migrations/` (or root `migrations/`)
+2. Implement migration
+3. Run `grgn migrate`
 
 ### Add New Route
 

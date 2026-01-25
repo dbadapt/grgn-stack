@@ -16,8 +16,7 @@ The migration system provides version control for database schema changes, inclu
 ### Building
 
 ```bash
-cd backend
-go build -o ../bin/migrate ./cmd/migrate
+go build -o ./bin/migrate ./cmd/migrate
 ```
 
 ### Usage
@@ -25,24 +24,24 @@ go build -o ../bin/migrate ./cmd/migrate
 **Check migration status:**
 
 ```bash
-./bin/migrate -command=status
+grgn migrate:status
 ```
 
 **Run pending migrations:**
 
 ```bash
-./bin/migrate -command=up
+grgn migrate
 ```
 
 **Rollback last migration:**
 
 ```bash
-./bin/migrate -command=down
+grgn migrate:down
 ```
 
 ## Creating New Migrations
 
-1. Create a new file in `backend/internal/database/migrations/` following the naming convention:
+1. Create a new file in `services/{domain}/{app}/migrations/` (or root `migrations/` for core) following the naming convention:
 
    ```
    XXX_description.go

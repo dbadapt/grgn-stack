@@ -6,19 +6,19 @@ GRGN Stack uses **GraphQL** as its primary API layer with automatic code generat
 
 ## Architecture
 
-- **Backend**: gqlgen generates Go resolvers from GraphQL schema
+- **Backend**: gqlgen generates Go resolvers from GraphQL schemas
 - **Frontend**: graphql-codegen generates TypeScript types and React Query hooks
-- **Schema**: Single source of truth in `schema/schema.graphql`
+- **Schema**: Single source of truth colocated in `services/{domain}/{app}/model/`
 - **Playground**: Interactive GraphQL IDE available in development
 
 ## Quick Start
 
 ### 1. Schema Development
 
-Edit the GraphQL schema:
+Edit the GraphQL schema in your app's model directory:
 
 ```bash
-schema/schema.graphql
+services/{domain}/{app}/model/types.graphql
 ```
 
 ### 2. Generate Code
@@ -50,7 +50,7 @@ cd web && npm run generate
 After generating, implement the resolver functions in:
 
 ```
-backend/internal/graphql/resolver/schema.resolvers.go
+services/{domain}/{app}/controller/resolver.go
 ```
 
 ## GraphQL Playground
@@ -78,7 +78,7 @@ query {
 
 ### 1. Define Queries
 
-Create `.graphql` files in `web/src/graphql/`:
+Create `.graphql` files in `services/{domain}/{app}/view/web/`:
 
 ```graphql
 # queries.graphql
@@ -127,34 +127,33 @@ function UserProfile() {
 
 ### Backend: gqlgen.yml
 
-Located at `backend/gqlgen.yml`:
+Located in each app directory:
 
 ```yaml
 schema:
-  - ../schema/*.graphql
+  - model/*.graphql
+  - ../../core/shared/model/*.graphql
 model:
-  filename: internal/graphql/model/models_gen.go
-  package: model
+  filename: controller/generated/models_gen.go
+  package: generated
 resolver:
   layout: follow-schema
-  dir: internal/graphql/resolver
-  package: resolver
+  dir: controller
+  package: controller
 exec:
-  filename: internal/graphql/generated.go
-  package: graphql
+  filename: controller/generated/generated.go
+  package: generated
 ```
 
 ### Frontend: codegen.yml
 
-Located at `web/codegen.yml`:
-
 ```yaml
 schema: http://localhost:8080/graphql
 documents:
-  - 'src/**/*.graphql'
-  - 'src/**/*.tsx'
+  - 'services/**/view/web/**/*.graphql'
+  - 'services/**/view/web/**/*.tsx'
 generates:
-  src/graphql/generated.ts:
+  services/core/shared/view/web/generated.ts:
     plugins:
       - typescript
       - typescript-operations
@@ -166,8 +165,12 @@ generates:
 ### Current Schema Structure
 
 ```
-schema/
-└── schema.graphql    # Main GraphQL schema
+services/
+├── core/
+│   ├── shared/model/        # Global scalars & common types
+│   └── auth/model/          # Identity & Access types
+└── twitter/
+    └── tweet/model/         # Tweet specific types
 ```
 
 ### Types Defined (Template Baseline)
@@ -187,8 +190,8 @@ schema/
 1. **Update Schema**
 
    ```bash
-   # Edit schema/schema.graphql
-   type User {
+   # Edit services/core/auth/model/types.graphql
+   type CoreAuthUser {
      id: ID!
      email: String!
      phoneNumber: String  # NEW FIELD
@@ -204,11 +207,11 @@ schema/
 3. **Implement Resolver**
 
    ```go
-   // backend/internal/graphql/resolver/schema.resolvers.go
-   func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
+   // services/core/auth/controller/resolver.go
+   func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
        // Fetch user from database
        return &model.User{
-           ID: id,
+           ID: "123",
            Email: "user@example.com",
            PhoneNumber: stringPtr("+1234567890"), // NEW
        }, nil
@@ -274,7 +277,7 @@ query {
 
 ### Frontend Testing
 
-Create test queries in `web/src/graphql/queries.graphql` and run:
+Create test queries in `services/**/view/web/*.graphql` and run:
 
 ```bash
 cd web && npm run generate
@@ -318,9 +321,8 @@ Then use the generated hooks in your components.
 
 ```bash
 # Clear generated files and regenerate
-cd backend
-rm -rf internal/graphql
-go run github.com/99designs/gqlgen generate
+rm -rf services/**/controller/generated
+grgn generate:backend
 ```
 
 ### Frontend Generation Fails

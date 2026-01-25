@@ -1,6 +1,6 @@
 # GRGN Stack Architecture Design
 
-> **Version:** 2.3 (2026-01-25)
+> **Version:** 2.4 (2026-01-25)
 > **Status:** Design Specification
 > **Development Focus:** 🚀 MVC Platform Implementation
 > **Stack:** Go + React + GraphQL + Neo4j
@@ -39,7 +39,7 @@ GRGN (pronounced "Gur-gen") is a modular monolith architecture that treats **inf
 ### 1.2 Key Characteristics
 
 - **Type-Safe Internal SDKs**: Domains don't call external services directly; they consume core controllers
-- **Declarative Schema-First**: GraphQL schemas are the single source of truth
+- **Declarative Schema-First**: GraphQL schemas are colocated within app models
 - **Graph-Native Data**: Neo4j enables natural relationship modeling
 - **Multi-Tenant by Design**: Configurable isolation from property-level to database-level
 - **CLI-Driven Development**: The `grgn` CLI automates scaffolding, validation, and deployment
@@ -51,9 +51,9 @@ GRGN (pronounced "Gur-gen") is a modular monolith architecture that treats **inf
 │                         GRGN Stack                                  │
 ├─────────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐    ┌─────────────────────────────────────┐    │
-│  │   web/ (React)  │◄───│  internal/core/shared/view/         │    │
-│  │   - Components  │    │  - Base components                  │    │
-│  │   - Pages       │    │  - Theme/Design system              │    │
+│  │   Frontend      │◄───│  services/core/shared/view/web/     │    │
+│  │   (Distributed) │    │  - Base components                  │    │
+│  │   - Components  │    │  - Theme/Design system              │    │
 │  └────────┬────────┘    └─────────────────────────────────────┘    │
 │           │ GraphQL                                                 │
 │           ▼                                                         │
@@ -63,7 +63,7 @@ GRGN (pronounced "Gur-gen") is a modular monolith architecture that treats **inf
 │  └──────────────────────────┬──────────────────────────────────┘   │
 │                             │                                       │
 │  ┌──────────────────────────┴──────────────────────────────────┐   │
-│  │                      internal/                               │   │
+│  │                      services/                               │   │
 │  │  ┌─────────────────┐         ┌─────────────────────────┐    │   │
 │  │  │      core/      │◄────────│      {product}/         │    │   │
 │  │  │  ├─ shared/     │         │  ├─ shared/             │    │   │
@@ -94,7 +94,7 @@ GRGN (pronounced "Gur-gen") is a modular monolith architecture that treats **inf
 
 ### 2.1 The Internal SDK Principle
 
-Domains like `twitter` **never interact with raw external drivers** (Postmark, S3, Stripe). Instead, they consume controller logic inside `core/shared`. This ensures:
+Domains like `twitter` **never interact with raw external drivers** (Postmark, S3, Stripe). Instead, they consume controller logic inside `services/core/shared`. This ensures:
 
 - **Single point of change**: Swapping Postmark → SendGrid requires changes in exactly one location
 - **Consistent error handling**: All external service errors are wrapped consistently
@@ -103,10 +103,10 @@ Domains like `twitter` **never interact with raw external drivers** (Postmark, S
 
 ### 2.2 Schema-First Development
 
-GraphQL schemas (`.graphql` files) are the **single source of truth**:
+GraphQL schemas (`.graphql` files) are the **single source of truth** and are colocated within app models:
 
 1. Design entities in Arrows.app → Export JSON
-2. Define GraphQL types from the visual model
+2. Define GraphQL types in `services/{domain}/{app}/model/*.graphql`
 3. Generate Go types, resolvers, and repository stubs
 4. Implement business logic in controllers
 
@@ -120,7 +120,7 @@ Domain isolation policies are **defined by developers** in `service_config.yaml`
 - `open` - No import restrictions (validation skipped)
 - `custom` - Developer-defined import rules
 
-The `grgn validate` command checks against **your chosen policy**, not a hardcoded ruleset.
+The `grgn` validate command checks against **your chosen policy**, not a hardcoded ruleset.
 
 ### 2.4 Configuration Locality
 
@@ -139,160 +139,97 @@ No giant global config file.
 > **CRITICAL**: This structure is mandatory. The `grgn` CLI validates conformance.
 
 ```
-/backend/
-├── main.go                          # Application entry point
-├── internal/
+/
+├── go.mod                           # Go module definition
+├── go.sum
+├── grgn.yaml                        # Project-wide CLI config
+│
+├── cmd/                             # ENTRY POINTS
+│   ├── grgn/                        # grgn CLI tool
+│   ├── server/                      # HTTP server (main.go)
+│   ├── migrate/                     # Migration runner
+│   └── worker/                      # Background job runner
+│
+├── pkg/                             # STANDALONE PACKAGES
+│   ├── config/                      # Configuration loader
+│   ├── grgn/                        # Core interfaces (importable)
+│   └── testing/                     # Test utilities
+│
+├── migrations/                      # CENTRAL INFRASTRUCTURE MIGRATIONS
+│   ├── 000001_initial_schema.up.go
+│   └── ...
+│
+├── services/                        # MODULAR MONOLITH DOMAINS
 │   ├── core/                        # INFRASTRUCTURE DOMAIN
 │   │   ├── service_config.yaml      # Core domain configuration
 │   │   │
 │   │   ├── shared/                  # GLOBAL INFRASTRUCTURE
-│   │   │   ├── service_config.yaml  # DB pools, AWS regions, etc.
-│   │   │   ├── model/
+│   │   │   ├── service_config.yaml
+│   │   │   ├── model/               # SHARED SCHEMAS & MODELS
 │   │   │   │   ├── scalars.graphql  # DateTime, JSON, Email, UUID
-│   │   │   │   └── common.graphql   # PageInfo, Error, interfaces
+│   │   │   │   ├── common.graphql   # PageInfo, Error, interfaces
+│   │   │   │   ├── core-model.json  # Arrows.app visual model
+│   │   │   │   └── types.go         # Shared Go types
 │   │   │   ├── view/
-│   │   │   │   ├── web/             # Base React components
+│   │   │   │   ├── web/             # BASE REACT COMPONENTS (Design System)
 │   │   │   │   │   ├── theme/       # Design tokens, CSS variables
 │   │   │   │   │   └── components/  # Button, Input, Modal, etc.
 │   │   │   │   └── admin/           # Admin dashboard UI
-│   │   │   ├── controller/
-│   │   │   │   ├── aws_sdk.go       # S3, SQS, SES wrapper
+│   │   │   ├── controller/          # SHARED SDK LOGIC
 │   │   │   │   ├── database.go      # Neo4j driver abstraction
 │   │   │   │   ├── mailer.go        # Email service interface
-│   │   │   │   ├── cache.go         # Redis/Memcached wrapper
 │   │   │   │   └── interfaces.go    # Exported interfaces
 │   │   │   └── generated/           # Code generation output
-│   │   │       ├── graphql/         # gqlgen output
-│   │   │       └── mappers/         # Type converters
 │   │   │
 │   │   ├── auth/                    # IDENTITY & ACCESS
-│   │   │   ├── service_config.yaml  # Token expiry, MFA settings
-│   │   │   ├── model/
+│   │   │   ├── service_config.yaml
+│   │   │   ├── model/               # AUTH SCHEMAS
 │   │   │   │   ├── types.graphql    # CoreAuthUser, Session
-│   │   │   │   ├── enums.graphql    # AUTH_PROVIDER, MFA_TYPE
+│   │   │   │   ├── auth-model.json  # Visual model
 │   │   │   │   └── inputs.graphql   # LoginInput, RegisterInput
 │   │   │   ├── view/
-│   │   │   │   ├── web/             # Login/Register UI
+│   │   │   │   ├── web/             # LOGIN/REGISTER UI (React)
+│   │   │   │   │   ├── LoginPage.tsx
+│   │   │   │   │   └── components/
 │   │   │   │   └── cli/             # Auth verification tools
 │   │   │   ├── controller/
-│   │   │   │   ├── login_handler.go # Strategy pattern for login
-│   │   │   │   ├── mfa_logic.go     # TOTP/SMS verification
 │   │   │   │   ├── session.go       # JWT/Session management
 │   │   │   │   └── resolver.go      # GraphQL resolvers
 │   │   │   └── generated/
 │   │   │
-│   │   ├── tenant/                  # MULTI-TENANCY
-│   │   │   ├── service_config.yaml  # Isolation policies, tiers
-│   │   │   ├── model/
-│   │   │   │   ├── instance.graphql # CoreTenantInstance
-│   │   │   │   └── subscription.graphql
-│   │   │   ├── view/
-│   │   │   │   ├── cli/             # Tenant provisioning
-│   │   │   │   └── jobs/            # Cleanup, billing
-│   │   │   ├── controller/
-│   │   │   │   ├── provisioner.go   # DB isolation logic
-│   │   │   │   ├── quota_enforcer.go
-│   │   │   │   └── resolver.go
-│   │   │   └── generated/
-│   │   │
-│   │   ├── directory/               # LDAP-STYLE SERVICES
-│   │   │   ├── service_config.yaml
-│   │   │   ├── model/
-│   │   │   │   ├── types.graphql    # CoreDirectoryUser, Group, ACL
-│   │   │   │   └── roles.graphql    # Role, Permission
-│   │   │   ├── view/
-│   │   │   ├── controller/
-│   │   │   │   ├── user_service.go
-│   │   │   │   ├── group_service.go
-│   │   │   │   ├── acl_service.go
-│   │   │   │   └── resolver.go
-│   │   │   └── generated/
-│   │   │
-│   │   └── feature/                 # FEATURE FLAGS
-│   │       ├── service_config.yaml
-│   │       ├── model/
-│   │       │   └── types.graphql    # CoreFeatureFlag
-│   │       ├── controller/
-│   │       │   ├── evaluator.go     # Flag evaluation logic
-│   │       │   └── resolver.go
-│   │       └── generated/
+│   │   └── tenant/                  # MULTI-TENANCY
+│   │       ├── model/               # TENANT SCHEMAS
+│   │       │   └── instance.graphql
+│   │       ├── view/
+│   │       │   ├── web/             # TENANT SELECTOR UI
+│   │       │   └── cli/             # Provisioning tools
+│   │       └── controller/
 │   │
 │   └── twitter/                     # PRODUCT DOMAIN (Example)
-│       ├── service_config.yaml      # Twitter-wide settings
-│       │
 │       ├── shared/                  # TWITTER-SPECIFIC UTILS
-│       │   ├── service_config.yaml  # Media CDN, hashtag rules
-│       │   ├── model/
-│       │   │   └── common.graphql   # Shared Twitter types
-│       │   ├── view/
-│       │   │   └── web/             # Twitter component library
-│       │   └── controller/
-│       │       ├── media_processor.go
-│       │       └── hashtag_aggregator.go
 │       │
-│       ├── tweet/                   # ATOMIC UNIT
-│       │   ├── service_config.yaml  # Char limits, media counts
-│       │   ├── model/
+│       ├── tweet/                   # TWEET APP
+│       │   ├── service_config.yaml
+│       │   ├── model/               # TWEET SCHEMAS
 │       │   │   ├── types.graphql    # TwitterTweet
-│       │   │   ├── enums.graphql    # TWEET_STATUS
-│       │   │   └── interactions.graphql
+│       │   │   └── tweet-model.json # Visual model
 │       │   ├── view/
-│       │   │   ├── web/             # Tweet components
+│       │   │   ├── web/             # TWEET COMPONENTS (React)
+│       │   │   │   ├── TweetCard.tsx
+│       │   │   │   └── Feed.tsx
 │       │   │   └── jobs/            # Sentiment analysis
 │       │   ├── controller/
 │       │   │   ├── post_handler.go  # Injects CoreAuth
-│       │   │   ├── deletion_policy.go
-│       │   │   └── resolver.go
+│       │   │   └── resolver.go      # GraphQL resolvers
 │       │   └── generated/
 │       │
-│       └── timeline/                # AGGREGATOR
-│           ├── service_config.yaml  # Algorithm weights, TTLs
-│           ├── model/
-│           │   └── types.graphql    # TwitterTimeline
+│       └── timeline/                # TIMELINE APP
+│           ├── model/               # TIMELINE SCHEMAS
+│           │   └── types.graphql
 │           ├── view/
-│           │   ├── mobile/          # Mobile API handlers
-│           │   └── jobs/            # Cache warming
-│           ├── controller/
-│           │   ├── resolver.go      # Top-level resolver
-│           │   ├── feed_algorithm.go
-│           │   └── cache_manager.go
-│           └── generated/
-│
-├── pkg/                             # STANDALONE PACKAGES
-│   ├── config/                      # Configuration loader
-│   │   └── config.go
-│   ├── grgn/                        # Core interfaces (importable)
-│   │   ├── auth.go                  # Auth interface
-│   │   ├── tenant.go                # Tenant interface
-│   │   ├── mailer.go                # Mailer interface
-│   │   └── errors.go                # Standard errors
-│   └── testing/                     # Test utilities
-│       └── mocks/
-│
-└── cmd/
-    ├── server/                      # HTTP server
-    │   └── main.go
-    ├── migrate/                     # Migration runner
-    │   └── main.go
-    └── worker/                      # Background job runner
-        └── main.go
-
-/web/                                # REACT APPLICATION
-├── src/
-│   ├── App.tsx
-│   ├── domains/                     # Domain-specific UI
-│   │   └── twitter/
-│   │       ├── components/
-│   │       └── pages/
-│   └── graphql/
-│       ├── generated.ts             # Codegen output
-│       └── queries.graphql
-
-/schema/                             # SCHEMA DEFINITIONS
-├── schema.graphql                   # Combined GraphQL schema
-└── graph-models/                    # Arrows.app JSON exports
-    ├── core-model.json
-    └── auth-model.json
+│           │   ├── web/             # TIMELINE UI
+│           │   └── mobile/          # Mobile API handlers
+│           └── controller/
 ```
 
 ---
@@ -311,12 +248,12 @@ When multiple teams work on different domains, identifier collisions occur:
 Every domain declares a unique prefix in its `service_config.yaml`:
 
 ```yaml
-# internal/core/service_config.yaml
+# services/core/service_config.yaml
 domain:
   name: core
   prefix: Core
   
-# internal/twitter/service_config.yaml  
+# services/twitter/service_config.yaml  
 domain:
   name: twitter
   prefix: Twitter
@@ -345,7 +282,7 @@ $ grgn validate
 ✓ Checking domain prefixes...
 ✓ Checking GraphQL type names...
 ✓ Checking database labels...
-✗ ERROR: Type 'User' in twitter/tweet/model/types.graphql missing prefix
+✗ ERROR: Type 'User' in services/twitter/tweet/model/types.graphql missing prefix
          Expected: 'TwitterTweetUser' or reference to 'CoreAuthUser'
 ```
 
@@ -354,7 +291,7 @@ $ grgn validate
 Product domains reference core types without redeclaring:
 
 ```graphql
-# twitter/timeline/model/types.graphql
+# services/twitter/timeline/model/types.graphql
 type TwitterTimeline {
   owner: CoreAuthUser!          # Reference to core/auth type
   tweets: [TwitterTweetPost!]!  # Reference to twitter/tweet type
@@ -368,7 +305,7 @@ type TwitterTimeline {
 
 ### 5.1 Model Layer
 
-**Definition**: Declarative `.graphql` files are the single source of truth.
+**Definition**: Declarative `.graphql` files are the single source of truth, colocated within each app's model directory.
 
 **Structure**:
 ```
@@ -377,7 +314,8 @@ model/
 ├── enums.graphql        # Enumeration types
 ├── inputs.graphql       # Input types for mutations
 ├── interfaces.graphql   # Shared interfaces
-└── directives.graphql   # Custom directives
+├── directives.graphql   # Custom directives
+└── {app}-model.json     # Arrows.app visual model
 ```
 
 **Rules**:
@@ -388,7 +326,7 @@ model/
 
 **Example**:
 ```graphql
-# twitter/tweet/model/types.graphql
+# services/twitter/tweet/model/types.graphql
 """
 A tweet represents a single post in the Twitter domain.
 """
@@ -406,13 +344,13 @@ type TwitterTweetPost @requiresAuth {
 
 ### 5.2 View Layer
 
-**Definition**: The "Consumer" of the domain. This is NOT just HTML.
+**Definition**: The "Consumer" of the domain. This is NOT just HTML. React components are colocated here.
 
 **View Types**:
 
 | Type | Location | Purpose |
 |------|----------|---------|
-| Web UI | `view/web/` | React components for browser |
+| Web UI | `view/web/` | React components for browser (Distributed) |
 | Mobile API | `view/mobile/` | REST/GraphQL handlers for native apps |
 | CLI Tool | `view/cli/` | Admin/operator command-line tools |
 | Background Job | `view/jobs/` | Scheduled tasks, workers, CRON |
@@ -420,7 +358,7 @@ type TwitterTweetPost @requiresAuth {
 
 **Example Structure**:
 ```
-tweet/view/
+services/twitter/tweet/view/
 ├── web/
 │   ├── TweetCard.tsx
 │   ├── TweetComposer.tsx
@@ -463,13 +401,13 @@ controller/
 
 **Example**:
 ```go
-// twitter/tweet/controller/post_handler.go
+// services/twitter/tweet/controller/post_handler.go
 package tweet
 
 import (
     "context"
-    "github.com/yourorg/grgn-stack/internal/core/auth"
-    "github.com/yourorg/grgn-stack/internal/core/shared"
+    "github.com/yourorg/grgn-stack/services/core/auth"
+    "github.com/yourorg/grgn-stack/services/core/shared"
 )
 
 type PostHandler struct {
@@ -524,8 +462,8 @@ func (h *PostHandler) CreatePost(ctx context.Context, input CreatePostInput) (*P
 
 ```
 service_config.yaml (root default)
-    └── core/service_config.yaml
-        └── core/auth/service_config.yaml
+    └── services/core/service_config.yaml
+        └── services/core/auth/service_config.yaml
             └── environment overrides (.env)
 ```
 
@@ -565,7 +503,7 @@ architecture:
 # See Section 11 for full policy options and examples
 # ============================================
 
-# core/auth/service_config.yaml
+# services/core/auth/service_config.yaml
 extends: ../service_config.yaml
 
 domain:
@@ -633,8 +571,8 @@ func LoadAuthConfig() (*AuthConfig, error) {
     // Load with inheritance
     provider, err := config.NewYAML(
         config.File("service_config.yaml"),
-        config.File("core/service_config.yaml"),
-        config.File("core/auth/service_config.yaml"),
+        config.File("services/core/service_config.yaml"),
+        config.File("services/core/auth/service_config.yaml"),
         config.Expand(os.LookupEnv), // Environment variable expansion
     )
     if err != nil {
@@ -657,8 +595,8 @@ The `grgn` CLI validates configuration:
 ```bash
 $ grgn config:validate
 ✓ Loading root service_config.yaml
-✓ Loading core/service_config.yaml
-✓ Loading core/auth/service_config.yaml
+✓ Loading services/core/service_config.yaml
+✓ Loading services/core/auth/service_config.yaml
 ✓ Validating schema compliance
 ✓ Checking environment variables
   ⚠ GRGN_OAUTH_GOOGLE_CLIENT_ID not set (using default: disabled)
@@ -676,21 +614,21 @@ Product domains consume core services through **well-defined interfaces**, never
 
 ```
 ┌──────────────────┐     Interface      ┌─────────────────────┐
-│  twitter/tweet   │ ─────────────────► │  core/shared        │
-│  PostHandler     │                    │  IMailer            │
+│ services/twitter │ ─────────────────► │ services/core/shared│
+│ PostHandler      │                    │ IMailer             │
 └──────────────────┘                    └──────────┬──────────┘
                                                    │
                                         ┌──────────┴──────────┐
-                                        │  Implementation     │
-                                        │  SendGridMailer     │
-                                        │  PostmarkMailer     │
+                                        │ Implementation      │
+                                        │ SendGridMailer      │
+                                        │ PostmarkMailer      │
                                         └─────────────────────┘
 ```
 
 ### 7.2 Interface Definition
 
 ```go
-// pkg/grgn/mailer.go - Standalone, importable
+// /pkg/grgn/mailer.go - Standalone, importable
 package grgn
 
 import "context"
@@ -725,7 +663,7 @@ type EmailResult struct {
 ### 7.3 Implementation
 
 ```go
-// internal/core/shared/controller/mailer.go
+// services/core/shared/controller/mailer.go
 package shared
 
 import (
@@ -754,7 +692,7 @@ func (m *SendGridMailer) SendEmail(ctx context.Context, req grgn.EmailRequest) e
 ### 7.4 Consumer Usage
 
 ```go
-// internal/twitter/tweet/controller/post_handler.go
+// services/twitter/tweet/controller/post_handler.go
 package tweet
 
 import "github.com/yourorg/grgn-stack/pkg/grgn"
@@ -806,7 +744,7 @@ GRGN supports **configurable tenant isolation** based on tenant requirements:
 ### 8.2 Property-Based Isolation
 
 ```graphql
-# core/tenant/model/types.graphql
+# services/core/tenant/model/types.graphql
 type CoreTenantInstance {
   id: ID!
   name: String!
@@ -842,7 +780,7 @@ CREATE (c:CoreSharedConfig {
 
 **Query Enforcement**:
 ```go
-// internal/core/tenant/controller/query_builder.go
+// services/core/tenant/controller/query_builder.go
 func (qb *QueryBuilder) ForTenant(ctx context.Context, query string) string {
     tenant := TenantFromContext(ctx)
     if tenant == nil || tenant.IsolationMode == "DEDICATED" {
@@ -884,7 +822,7 @@ RETURN u, t
 ### 8.4 Tenant Provisioning
 
 ```go
-// internal/core/tenant/controller/provisioner.go
+// services/core/tenant/controller/provisioner.go
 func (p *Provisioner) CreateTenant(ctx context.Context, input CreateTenantInput) (*Tenant, error) {
     tenant := &Tenant{
         ID:            uuid.New().String(),
@@ -923,7 +861,7 @@ func determineIsolation(tier TenantTier) IsolationMode {
 ### 8.5 Tenant Context Middleware
 
 ```go
-// internal/core/tenant/controller/middleware.go
+// services/core/tenant/controller/middleware.go
 func TenantMiddleware(resolver TenantResolver) gin.HandlerFunc {
     return func(c *gin.Context) {
         // Extract tenant from subdomain, header, or JWT
@@ -1111,10 +1049,10 @@ $ grgn deploy:azure          # Deploy to Azure (AKS)
 $ grgn make:app twitter/notifications
 
 # 2. Define model (manually edit or use arrows.app)
-$ code internal/twitter/notifications/model/types.graphql
+$ code services/twitter/notifications/model/types.graphql
 
 # 3. Generate from model
-$ grgn make:scaffold twitter/notifications
+$ grgn make:scaffold services/twitter/notifications
 
 # Output:
 # ✓ Created controller/resolver.go
@@ -1123,13 +1061,7 @@ $ grgn make:scaffold twitter/notifications
 # ✓ Created migration 003_notifications.go
 # ✓ Created view/web/NotificationList.tsx
 # ✓ Created view/jobs/notification_sender.go
-# ✓ Updated schema/schema.graphql
-
-# 4. Run migrations
-$ grgn migrate
-
-# 5. Validate
-$ grgn validate
+# ✓ Updated schemas in model/
 ```
 
 ---
@@ -1188,40 +1120,13 @@ resolver:
   package: graphql
 
 autobind:
-  - github.com/yourorg/grgn-stack/internal/twitter/tweet/controller
+  - github.com/yourorg/grgn-stack/services/twitter/tweet/controller
 
 models:
   DateTime:
     model: github.com/yourorg/grgn-stack/pkg/grgn.DateTime
   UUID:
     model: github.com/yourorg/grgn-stack/pkg/grgn.UUID
-```
-
-### 10.4 Repository Generation
-
-From GraphQL types, generate repository interfaces:
-
-```graphql
-# Input
-type TwitterTweetPost {
-  id: ID!
-  author: CoreAuthUser!
-  content: String!
-  createdAt: DateTime!
-}
-```
-
-```go
-// Output: controller/generated/repository/interfaces.go
-package repository
-
-type IPostRepository interface {
-    Create(ctx context.Context, post *Post) (*Post, error)
-    FindByID(ctx context.Context, id string) (*Post, error)
-    FindByAuthor(ctx context.Context, authorID string, pagination Pagination) ([]*Post, error)
-    Update(ctx context.Context, id string, updates PostUpdates) (*Post, error)
-    Delete(ctx context.Context, id string) error
-}
 ```
 
 ---
@@ -1244,7 +1149,7 @@ GRGN uses **golang-migrate** for database schema migrations, wrapped by the `grg
 ### 11.2 Migration File Structure
 
 ```
-/backend/
+/
 ├── migrations/                      # CENTRAL - Core domain migrations
 │   ├── 000001_initial_schema.up.cypher
 │   ├── 000001_initial_schema.down.cypher
@@ -1254,7 +1159,7 @@ GRGN uses **golang-migrate** for database schema migrations, wrapped by the `grg
 │   ├── 000003_tenant_support.down.go
 │   └── migrations.go                # Go migration registry
 │
-├── internal/
+├── services/
 │   ├── core/                        # Core migrations in central /migrations/
 │   │   ├── auth/
 │   │   ├── tenant/
@@ -1379,10 +1284,10 @@ func init() {
 Migrations execute in **domain priority order**:
 
 ```
-1. /backend/migrations/          (core - always first)
-2. /internal/core/*/migrations/  (core apps - alphabetical)
-3. /internal/{product}/migrations/ (product domains - alphabetical)
-4. /internal/{product}/*/migrations/ (product apps - alphabetical)
+1. /migrations/                  (core - always first)
+2. /services/core/*/migrations/  (core apps - alphabetical)
+3. /services/{product}/migrations/ (product domains - alphabetical)
+4. /services/{product}/*/migrations/ (product apps - alphabetical)
 ```
 
 **Example execution order:**
@@ -1390,14 +1295,14 @@ Migrations execute in **domain priority order**:
 [core]     migrations/000001_initial_schema
 [core]     migrations/000002_auth_providers
 [core]     migrations/000003_tenant_support
-[core]     internal/core/auth/migrations/000001_mfa_tables
-[core]     internal/core/tenant/migrations/000001_billing
-[product]  internal/commerce/migrations/000001_commerce_init
-[product]  internal/commerce/cart/migrations/000001_cart_schema
-[product]  internal/twitter/migrations/000001_twitter_init
-[product]  internal/twitter/tweet/migrations/000001_tweet_schema
-[product]  internal/twitter/tweet/migrations/000002_add_media
-[product]  internal/twitter/timeline/migrations/000001_timeline_cache
+[core]     services/core/auth/migrations/000001_mfa_tables
+[core]     services/core/tenant/migrations/000001_billing
+[product]  services/commerce/migrations/000001_commerce_init
+[product]  services/commerce/cart/migrations/000001_cart_schema
+[product]  services/twitter/migrations/000001_twitter_init
+[product]  services/twitter/tweet/migrations/000001_tweet_schema
+[product]  services/twitter/tweet/migrations/000002_add_media
+[product]  services/twitter/timeline/migrations/000001_timeline_cache
 ```
 
 ### 11.5 CLI Commands
@@ -1445,14 +1350,14 @@ Migration Status:
 # Create new migration
 $ grgn migrate:create twitter/tweet add_reactions
 Created:
-  internal/twitter/tweet/migrations/000003_add_reactions.up.cypher
-  internal/twitter/tweet/migrations/000003_add_reactions.down.cypher
+  services/twitter/tweet/migrations/000003_add_reactions.up.cypher
+  services/twitter/tweet/migrations/000003_add_reactions.down.cypher
 
 # Create Go migration (for complex logic)
 $ grgn migrate:create twitter/tweet data_backfill --go
 Created:
-  internal/twitter/tweet/migrations/000003_data_backfill.up.go
-  internal/twitter/tweet/migrations/000003_data_backfill.down.go
+  services/twitter/tweet/migrations/000003_data_backfill.up.go
+  services/twitter/tweet/migrations/000003_data_backfill.down.go
 
 # Validate migrations (check for issues)
 $ grgn migrate:validate
@@ -1673,7 +1578,7 @@ func (m *Migrator) collectMigrationSources() []MigrationSource {
     })
     
     // 2. Core app migrations (alphabetical)
-    coreApps := m.findMigrationDirs("internal/core/*/migrations")
+    coreApps := m.findMigrationDirs("services/core/*/migrations")
     sort.Strings(coreApps)
     for _, app := range coreApps {
         sources = append(sources, MigrationSource{
@@ -1722,18 +1627,18 @@ architecture:
     # Define explicit allow/deny patterns
     imports:
       # Pattern: which packages can import what
-      - from: "internal/twitter/*"
+      - from: "services/twitter/*"
         allow:
-          - "internal/core/*"
-          - "internal/commerce/*"  # Allow cross-product import
+          - "services/core/*"
+          - "services/commerce/*"  # Allow cross-product import
           - "pkg/*"
         deny:
-          - "internal/twitter/*/controller/generated/*"  # No importing generated code
+          - "services/twitter/*/controller/generated/*"  # No importing generated code
       
-      - from: "internal/core/*"
+      - from: "services/core/*"
         allow:
           - "pkg/*"
-        # Implicitly denies internal/* imports
+        # Implicitly denies services/* imports
     
     # Naming patterns (regex)
     naming:
@@ -1765,7 +1670,7 @@ architecture:
 - Best for: Most projects, balanced flexibility
 
 ```yaml
-# internal/twitter/service_config.yaml
+# services/twitter/service_config.yaml
 domain:
   name: twitter
   prefix: Twitter
@@ -1830,7 +1735,7 @@ $ grgn validate:imports
 
 Checking import rules (policy: relaxed)...
 
-⚠ WARNING: internal/twitter/timeline imports internal/commerce/pricing
+⚠ WARNING: services/twitter/timeline imports services/commerce/pricing
   This cross-domain import is not declared in twitter/service_config.yaml
   
   Options:
@@ -1842,7 +1747,7 @@ Checking import rules (policy: relaxed)...
   Choice (1-4): 1
   
   ✓ Added commerce/pricing to twitter dependencies
-  ✓ Updated internal/twitter/service_config.yaml
+  ✓ Updated services/twitter/service_config.yaml
 
 Validation complete: 0 errors, 1 warning (resolved)
 ```
@@ -1932,8 +1837,8 @@ For legitimate exceptions:
 
 ```go
 // Use directive comments to suppress warnings
-//grgn:allow-import internal/legacy/oldcode
-import "github.com/yourorg/grgn-stack/internal/legacy/oldcode"
+//grgn:allow-import services/legacy/oldcode
+import "github.com/yourorg/grgn-stack/services/legacy/oldcode"
 ```
 
 ```yaml
@@ -1941,7 +1846,7 @@ import "github.com/yourorg/grgn-stack/internal/legacy/oldcode"
 architecture:
   exceptions:
     imports:
-      - pattern: "internal/legacy/*"
+      - pattern: "services/legacy/*"
         reason: "Legacy code being migrated"
         expires: "2026-06-01"  # Optional expiration
 ```
@@ -1952,26 +1857,26 @@ architecture:
 
 ### 13.1 From Current Structure
 
-The existing codebase has:
-- `internal/graphql/` - Flat GraphQL setup
-- `internal/repository/` - Flat repository
-- `internal/database/` - Database connection
-- `pkg/config/` - Configuration
+The existing codebase is being migrated to:
+- `services/` - Root level domain code
+- `pkg/` - Root level standalone packages
+- `cmd/` - Root level CLI entry points
+- `migrations/` - Root level central migrations
 
 ### 13.2 Migration Steps
 
 1. **Phase 1: Core Foundation**
-   - Create `internal/core/shared/` structure
-   - Move database, config to core/shared
+   - Create `services/core/shared/` structure
+   - Colocate schemas in `model/` and web components in `view/web/`
    - Extract interfaces to `pkg/grgn/`
 
 2. **Phase 2: Auth Domain**
-   - Create `internal/core/auth/`
+   - Create `services/core/auth/`
    - Move user-related code
    - Add service_config.yaml
 
 3. **Phase 3: Tenant Domain**
-   - Create `internal/core/tenant/`
+   - Create `services/core/tenant/`
    - Implement tenant isolation
    - Add provisioning logic
 
@@ -2014,8 +1919,8 @@ During migration:
 
 ```go
 // Always allowed (all policies)
-import "github.com/yourorg/grgn-stack/internal/core/auth"
-import "github.com/yourorg/grgn-stack/internal/core/shared"
+import "github.com/yourorg/grgn-stack/services/core/auth"
+import "github.com/yourorg/grgn-stack/services/core/shared"
 import "github.com/yourorg/grgn-stack/pkg/grgn"
 
 // Cross-product imports - depends on your architecture.isolation setting:
@@ -2024,12 +1929,12 @@ import "github.com/yourorg/grgn-stack/pkg/grgn"
 // If isolation: relaxed → ⚠ Allowed if declared in dependencies
 // If isolation: open → ✅ Allowed
 // If isolation: custom → Depends on your rules
-import "github.com/yourorg/grgn-stack/internal/commerce/cart"
+import "github.com/yourorg/grgn-stack/services/commerce/cart"
 ```
 
 **To declare a dependency (relaxed mode):**
 ```yaml
-# internal/twitter/service_config.yaml
+# services/twitter/service_config.yaml
 domain:
   name: twitter
   dependencies:
@@ -2042,6 +1947,7 @@ domain:
 
 ```graphql
 # Type: {Domain}{App}{Type}
+# Location: services/{domain}/{app}/model/types.graphql
 type TwitterTweetPost { ... }
 type CoreAuthUser { ... }
 
@@ -2073,7 +1979,7 @@ type Mutation {
 Complete example showing MVC pattern in practice:
 
 ```graphql
-# internal/twitter/timeline/model/types.graphql
+# services/twitter/timeline/model/types.graphql
 type TwitterTimeline {
   owner: CoreAuthUser!
   tweets: [TwitterTweetPost!]!
@@ -2089,7 +1995,7 @@ extend type Query {
 ```
 
 ```go
-// internal/twitter/timeline/controller/resolver.go
+// services/twitter/timeline/controller/resolver.go
 package timeline
 
 type Resolver struct {
@@ -2119,7 +2025,7 @@ func (r *Resolver) TwitterTimelineHome(ctx context.Context, cursor *string, limi
 ```
 
 ```go
-// internal/twitter/timeline/controller/feed_algorithm.go
+// services/twitter/timeline/controller/feed_algorithm.go
 package timeline
 
 type FeedAlgorithm struct {
@@ -2152,141 +2058,6 @@ func (f *FeedAlgorithm) GenerateHomeFeed(ctx context.Context, userID string, cur
 
 ---
 
-## Appendix C: Architecture Policy Presets
-
-Ready-to-use policy configurations for common scenarios.
-
-### C.1 Startup / Rapid Prototyping
-
-```yaml
-# service_config.yaml - Move fast, minimal rules
-architecture:
-  isolation: open
-  naming: disabled
-  onViolation: ignore
-```
-
-### C.2 Small Team (Recommended Default)
-
-```yaml
-# service_config.yaml - Balanced flexibility and guardrails
-architecture:
-  isolation: relaxed
-  naming: recommended
-  onViolation: warn
-```
-
-### C.3 Large Team / Multiple Squads
-
-```yaml
-# service_config.yaml - Clear boundaries between teams
-architecture:
-  isolation: strict
-  naming: required
-  onViolation: error
-  
-  # Optional: Define team ownership
-  teams:
-    platform:
-      owns: ["core/*"]
-    growth:
-      owns: ["twitter/*", "notifications/*"]
-    commerce:
-      owns: ["commerce/*", "payments/*"]
-```
-
-### C.4 Enterprise / Compliance
-
-```yaml
-# service_config.yaml - Maximum control and auditability
-architecture:
-  isolation: custom
-  naming: required
-  onViolation: error
-  
-  rules:
-    imports:
-      # PCI-DSS: Payment code is isolated
-      - from: "internal/payments/*"
-        allow: ["pkg/*"]
-        deny: ["internal/*"]  # No internal dependencies
-      
-      # HIPAA: Health data isolated  
-      - from: "internal/health/*"
-        allow: ["internal/core/auth", "pkg/*"]
-        deny: ["internal/*"]
-      
-      # Everything else follows relaxed rules
-      - from: "internal/*"
-        allow: ["internal/core/*", "pkg/*"]
-    
-  # Audit trail
-  audit:
-    logViolations: true
-    logResolutions: true
-    
-  # Exception governance
-  exceptions:
-    requireApproval: true
-    maxDuration: 30d
-```
-
-### C.5 Migrating Legacy Codebase
-
-```yaml
-# service_config.yaml - Start permissive, tighten over time
-architecture:
-  isolation: relaxed
-  naming: recommended
-  onViolation: warn
-  
-  # Grandfather existing violations
-  exceptions:
-    imports:
-      - pattern: "internal/legacy/*"
-        reason: "Pre-migration code"
-        expires: "2026-12-31"
-      - pattern: "internal/*/old_*"
-        reason: "Deprecated modules"
-        expires: "2026-06-30"
-  
-  # Track progress
-  migration:
-    trackViolations: true
-    targetPolicy: strict  # Where we're headed
-    targetDate: "2027-01-01"
-```
-
-### C.6 Monorepo with Multiple Products
-
-```yaml
-# service_config.yaml - Product boundaries with shared core
-architecture:
-  isolation: custom
-  naming: required
-  onViolation: error
-  
-  rules:
-    imports:
-      # Product A can only use core and its own code
-      - from: "internal/product-a/*"
-        allow: ["internal/core/*", "internal/product-a/*", "pkg/*"]
-      
-      # Product B can only use core and its own code
-      - from: "internal/product-b/*"
-        allow: ["internal/core/*", "internal/product-b/*", "pkg/*"]
-      
-      # Shared libraries available to all
-      - from: "internal/shared-libs/*"
-        allow: ["pkg/*"]
-      
-      # Products can use shared libs
-      - from: "internal/product-*/*"
-        allow: ["internal/shared-libs/*"]
-```
-
----
-
 ## Revision History
 
 | Version | Date | Author | Changes |
@@ -2296,3 +2067,4 @@ architecture:
 | 2.1 | 2026-01-25 | - | Made domain isolation configurable (developer choice) |
 | 2.2 | 2026-01-25 | - | Added Database Schema Management (golang-migrate, Section 11) |
 | 2.3 | 2026-01-25 | - | Relocated design document to project root |
+| 2.4 | 2026-01-25 | - | Updated File Layout: backend/internal/ → services/ at root |

@@ -15,12 +15,12 @@ GRGN Stack supports three environments: **development**, **staging**, and **prod
 
 All backend env vars are prefixed with `GRGN_STACK_`
 
-### Frontend (.env files in web/ directory)
+### Frontend (.env files in project root)
 
-- `web/.env.example` - Template
-- `web/.env.development` - Development environment
-- `web/.env.staging` - Staging environment
-- `web/.env.production` - Production environment
+- `.env.example` - Template (frontend part)
+- `.env.development` - Development environment
+- `.env.staging` - Staging environment
+- `.env.production` - Production environment
 
 All frontend env vars must be prefixed with `VITE_` to be exposed to the client.
 
@@ -31,7 +31,6 @@ All frontend env vars must be prefixed with `VITE_` to be exposed to the client.
 ```bash
 # Copy example files
 cp .env.example .env
-cp web/.env.example web/.env
 
 # Start with development compose
 docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
@@ -109,6 +108,6 @@ if (isDevelopment) {
 
 ### Frontend
 
-1. Add VITE\_ prefixed variable to `web/.env.example`
-2. Update `web/src/config/env.ts` interface
+1. Add VITE_ prefixed variable to `.env.example`
+2. Update `services/**/view/web/config/env.ts` interface
 3. Update environment-specific .env files
