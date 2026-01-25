@@ -4,31 +4,12 @@
 scalar Time
 scalar UUID
 
-# User represents a registered user in the system
-type User {
-  id: ID!
-  email: String!
-  name: String
-  createdAt: Time!
-  updatedAt: Time!
-}
-
-# Pagination input
-input PaginationInput {
-  page: Int = 1
-  pageSize: Int = 20
-}
-
 # Root Query type
 type Query {
   # Health check
   health: String!
 
-  # Get current authenticated user
-  me: User
-
-  # Get user by ID
-  user(id: ID!): User
+  # TODO: Define core domain entities (User, etc.)
 }
 
 # Root Mutation type

@@ -80,7 +80,7 @@ The initialization script will:
 
 ### ✅ Ready to Use
 
-- User entity with GraphQL queries (`health`, `me`, `user`)
+- Core GraphQL infrastructure ready with health check
 - Neo4j database with migration framework
 - Docker Compose for dev/staging/production
 - CI/CD pipelines (GitHub Actions)
@@ -366,7 +366,7 @@ This template provides the foundation. Add your business logic:
 
 ## Support
 
-- 📖 Read the [documentation](./SCHEMA-QUICKREF.md)
+- 📖 Read the [documentation](./DATABASE.md)
 - 🐛 Report issues on [GitHub Issues](https://github.com/dbadapt/grgn-stack/issues)
 - 💬 Discuss on [GitHub Discussions](https://github.com/dbadapt/grgn-stack/discussions)
 

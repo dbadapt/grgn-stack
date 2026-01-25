@@ -324,17 +324,14 @@ model/
 
 **Example**:
 ```graphql
-# services/twitter/tweet/model/types.graphql
+# services/domain/app/model/types.graphql
 """
-A tweet represents a single post in the Twitter domain.
+A generic entity represents a business object.
 """
-type TwitterTweetPost @requiresAuth {
+type DomainAppEntity @requiresAuth {
   id: ID!
-  author: CoreAuthUser!
-  content: String! @length(max: 280)
-  status: TWITTER_TWEET_STATUS!
-  media: [TwitterTweetMedia!]!
-  metrics: TwitterTweetMetrics!
+  name: String!
+  status: DOMAIN_APP_STATUS!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -356,17 +353,17 @@ type TwitterTweetPost @requiresAuth {
 
 **Example Structure**:
 ```
-services/twitter/tweet/view/
+services/domain/app/view/
 ├── web/
-│   ├── TweetCard.tsx
-│   ├── TweetComposer.tsx
-│   └── TweetThread.tsx
+│   ├── EntityCard.tsx
+│   ├── EntityComposer.tsx
+│   └── EntityThread.tsx
 ├── jobs/
-│   ├── sentiment_analyzer.go    # Runs every hour
-│   ├── trending_calculator.go   # Runs every 5 min
-│   └── cleanup_deleted.go       # Runs daily
+│   ├── data_analyzer.go    # Runs every hour
+│   ├── cache_warmer.go     # Runs every 5 min
+│   └── cleanup_deleted.go  # Runs daily
 └── cli/
-    └── tweet_admin.go           # grgn tweet:admin commands
+    └── entity_admin.go     # grgn app:admin commands
 ```
 
 **Design Principle**: When creating a new module, always ask:
@@ -399,20 +396,18 @@ controller/
 
 **Example**:
 ```go
-// services/twitter/tweet/controller/post_handler.go
-package tweet
+// services/domain/app/controller/logic_handler.go
+package app
 
 import (
     "context"
-    "github.com/yourorg/grgn-stack/services/core/auth"
     "github.com/yourorg/grgn-stack/services/core/shared"
 )
 
-type PostHandler struct {
-    authService   auth.IUserService       // From core/auth
-    mediaService  shared.IMediaProcessor  // From core/shared
-    repository    IPostRepository         // Local interface
-    config        *TweetConfig            // From service_config.yaml
+type LogicHandler struct {
+    dataService   shared.IDataProcessor  // From core/shared
+    repository    ILocalRepository       // Local interface
+    config        *AppConfig             // From service_config.yaml
 }
 
 func NewPostHandler(

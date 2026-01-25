@@ -2,28 +2,11 @@
 
 package model
 
-import (
-	"time"
-)
-
 type Mutation struct {
-}
-
-type PaginationInput struct {
-	Page     *int `json:"page,omitempty"`
-	PageSize *int `json:"pageSize,omitempty"`
 }
 
 type Query struct {
 }
 
 type Subscription struct {
-}
-
-type User struct {
-	ID        string    `json:"id"`
-	Email     string    `json:"email"`
-	Name      *string   `json:"name,omitempty"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
 }

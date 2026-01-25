@@ -322,33 +322,8 @@ neo4j_data           →   /data             (persistence)
 
 ---
 
-## 🔐 Authentication Flow
-
-```
-User
-  │
-  ├─ Login with Google
-  │     │
-  │     └─► OAuth Flow
-  │           │
-  │           └─► Core Auth Service (services/core/auth)
-  │                 │
-  │                 └─► JWT Token
-  │                       │
-  │                       └─► Store in HTTP-only cookie
-  │
-  └─ Subsequent Requests
-        │
-        └─► Cookie attached
-              │
-              └─► API Gateway validates JWT
-                    │
-                    ├─ Valid → Process request
-                    │            │
-                    │            └─► Access Neo4j Fabric with user context
-                    │
-                    └─ Invalid → Return 401
-```
+## 🔐 TODO: Authentication Flow
+Authentication flow documentation will be updated once the identity model is finalized.
 
 ---
 

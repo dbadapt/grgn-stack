@@ -267,23 +267,16 @@ describe('MyComponent', () => {
 ### Query Example
 
 ```graphql
-query GetUser($id: ID!) {
-  user(id: $id) {
-    id
-    email
-    name
-  }
+query GetHealth {
+  health
 }
 ```
 
 ### Mutation Example
 
 ```graphql
-mutation CreateUser($input: CreateUserInput!) {
-  createUser(input: $input) {
-    id
-    email
-  }
+mutation Placeholder($_empty: String) {
+  _empty
 }
 ```
 
@@ -345,7 +338,6 @@ docker-compose restart neo4j
 | [CONFIG.md](CONFIG.md)                   | Configuration guide    |
 | [DATABASE.md](DATABASE.md)               | Database schema        |
 | [GRAPHQL.md](GRAPHQL.md)                 | GraphQL guide          |
-| [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) | Visual design workflow |
 | [TESTING-CI.md](TESTING-CI.md)           | Testing & CI/CD        |
 | [COVERAGE.md](COVERAGE.md)               | Coverage tracking      |
 | [CI-CD.md](CI-CD.md)                     | Deployment guide       |

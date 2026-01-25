@@ -8,8 +8,6 @@ package graphql
 import (
 	"context"
 	"fmt"
-
-	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
 )
 
 // Empty is the resolver for the _empty field.
@@ -20,16 +18,6 @@ func (r *mutationResolver) Empty(ctx context.Context) (*string, error) {
 // Health is the resolver for the health field.
 func (r *queryResolver) Health(ctx context.Context) (string, error) {
 	panic(fmt.Errorf("not implemented: Health - health"))
-}
-
-// Me is the resolver for the me field.
-func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: Me - me"))
-}
-
-// User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
 }
 
 // Empty is the resolver for the _empty field.

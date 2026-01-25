@@ -4,26 +4,6 @@ query GetHealth {
   health
 }
 
-query GetCurrentUser {
-  me {
-    id
-    email
-    name
-    createdAt
-    updatedAt
-  }
-}
-
-query GetUser($id: ID!) {
-  user(id: $id) {
-    id
-    email
-    name
-    createdAt
-    updatedAt
-  }
-}
-
 # Add your custom queries and mutations below
 # Example:
 #
