@@ -2,6 +2,8 @@
 
 Visual overview of the GRGN Stack architecture and how components interact.
 
+> **Note:** For the formalized MVC platform implementation specification, domain isolation policies, and internal SDK patterns, please refer to the primary design document: **[backend/mvc_design.md](backend/mvc_design.md)** (Current Development Focus 🚀).
+
 ---
 
 ## 🏗️ High-Level Architecture
@@ -31,12 +33,12 @@ Visual overview of the GRGN Stack architecture and how components interact.
 
 ## 🔄 Data Flow
 
-### Query Flow
+### Query Flow (MVC)
 
 ```
 User Interaction
       ↓
-React Component
+VIEW: React Component (web/src/domains/)
       ↓
 TanStack Query Hook
       ↓
@@ -44,11 +46,15 @@ GraphQL Query (auto-generated)
       ↓
 HTTP Request → Backend :8080/graphql
       ↓
-GraphQL Resolver (Go)
+CONTROLLER: GraphQL Resolver (resolver.go)
       ↓
-Repository Layer
+CONTROLLER: Handler (*_handler.go)
       ↓
-Neo4j Driver
+Core Services (via Internal SDK interfaces)
+      ↓
+Repository Layer (generated/)
+      ↓
+Neo4j Driver (core/shared/controller/database.go)
       ↓
 Cypher Query → Neo4j :7687
       ↓
@@ -56,17 +62,17 @@ Graph Data
       ↓
 [Return path reverses]
       ↓
-JSON Response
+MODEL: GraphQL Response (types from .graphql)
       ↓
-React Component Re-render
+VIEW: React Component Re-render
 ```
 
-### Mutation Flow
+### Mutation Flow (MVC)
 
 ```
 User Action (Click, Submit, etc.)
       ↓
-React Event Handler
+VIEW: React Event Handler
       ↓
 TanStack Mutation Hook
       ↓
@@ -74,11 +80,15 @@ GraphQL Mutation (auto-generated)
       ↓
 HTTP POST → Backend :8080/graphql
       ↓
-GraphQL Resolver (Go)
+CONTROLLER: GraphQL Resolver (resolver.go)
       ↓
-Validation
+CONTROLLER: Handler (*_handler.go)
       ↓
-Repository Layer
+CONTROLLER: Policy Validation (*_policy.go)
+      ↓
+Core Services (auth, mailer, etc. via interfaces)
+      ↓
+Repository Layer (generated/)
       ↓
 Neo4j Transaction
       ↓
@@ -86,11 +96,9 @@ Cypher CREATE/UPDATE/DELETE
       ↓
 Commit Transaction
       ↓
-Response → Frontend
+MODEL: Response (GraphQL types)
       ↓
-Cache Invalidation
-      ↓
-UI Update
+VIEW: Cache Invalidation → UI Update
 ```
 
 ---
@@ -103,10 +111,17 @@ UI Update
 web/
 │
 ├── src/
-│   ├── components/          # Reusable UI components
-│   │   └── *.tsx
+│   ├── App.tsx              # Application root
 │   │
-│   ├── pages/              # Page components
+│   ├── domains/             # Domain-specific UI (mirrors backend)
+│   │   └── {product}/          # e.g., twitter/
+│   │       ├── components/        # Domain components
+│   │       └── pages/             # Domain pages
+│   │
+│   ├── components/          # Global reusable UI components
+│   │   └── *.tsx               # (inherits from core/shared/view/web)
+│   │
+│   ├── pages/              # Global page components
 │   │   └── *.tsx
 │   │
 │   ├── graphql/            # GraphQL queries & generated code
@@ -126,45 +141,63 @@ web/
 │       └── setup.ts
 ```
 
-### Backend (Go)
+### Backend (Go) - Modular Monolith
+
+> See [mvc_design.md](backend/mvc_design.md) Section 3 for complete file layout.
 
 ```
 backend/
 │
-├── main.go                 # Application entry point
+├── main.go                     # Application entry point
 │
-├── cmd/                    # Command-line tools
-│   └── migrate/
-│       └── main.go            # Migration runner
+├── cmd/                        # Command-line tools
+│   ├── grgn/                   # GRGN CLI tool
+│   ├── server/                 # HTTP server
+│   ├── migrate/                # Migration runner
+│   └── worker/                 # Background job runner
 │
-└── internal/               # Internal packages
-    │
-    ├── database/           # Database layer
-    │   ├── neo4j.go           # Connection & driver
-    │   └── migrations/        # Database migrations
-    │       ├── 001_*.go
-    │       ├── migrator.go
-    │       └── registry.go
-    │
-    ├── graphql/            # GraphQL layer
-    │   ├── generated.go       # gqlgen generated code
-    │   ├── model/             # GraphQL models
-    │   │   └── models_gen.go
-    │   └── resolver/          # Resolvers (handlers)
-    │       ├── resolver.go
-    │       └── schema.resolvers.go
-    │
-    └── repository/         # Data access layer
-        └── *_repository.go    # Database operations
+├── internal/                   # Modular Monolith Domains
+│   │
+│   ├── core/                   # INFRASTRUCTURE DOMAIN
+│   │   ├── shared/             # Global infra (DB, mailer, cache)
+│   │   │   ├── model/          # Shared GraphQL scalars
+│   │   │   ├── view/           # Base components, admin UI
+│   │   │   └── controller/     # SDK implementations
+│   │   ├── auth/               # Identity & access
+│   │   │   ├── model/          # CoreAuthUser, Session
+│   │   │   ├── view/           # Login UI, CLI tools
+│   │   │   └── controller/     # Auth handlers
+│   │   ├── tenant/             # Multi-tenancy
+│   │   └── directory/          # Users, Groups, ACLs
+│   │
+│   └── {product}/              # PRODUCT DOMAINS (e.g., twitter)
+│       ├── shared/             # Product-specific utils
+│       └── {app}/              # Individual apps (e.g., tweet, timeline)
+│           ├── model/          # GraphQL types (.graphql)
+│           ├── view/           # Web, CLI, Jobs
+│           ├── controller/     # Business logic, resolvers
+│           └── generated/      # Code generation output
+│
+└── migrations/                 # Central core migrations
+    └── *.cypher / *.go         # golang-migrate files
 ```
 
-### Shared Packages (pkg/)
+### Standalone Packages (pkg/)
 
 ```
 pkg/
 │
-└── config/                 # Configuration management
-    └── config.go              # Viper-based config loading
+├── config/                 # Configuration management
+│   └── config.go              # uber-go/config + Viper
+│
+├── grgn/                   # Core interfaces (importable by external projects)
+│   ├── auth.go                # IAuthService interface
+│   ├── tenant.go              # ITenantService interface
+│   ├── mailer.go              # IMailer interface
+│   └── errors.go              # Standard error types
+│
+└── testing/                # Test utilities
+    └── mocks/                 # Interface mocks
 ```
 
 ### Shared Schema
@@ -225,25 +258,43 @@ schema/
 └─────────────────────────────────────────────┘
 ```
 
-### Layer 3: Backend (Business Logic)
+### Layer 3: Backend (MVC Pattern)
+
+> See [mvc_design.md](backend/mvc_design.md) Section 5 for MVC details.
 
 ```
 ┌─────────────────────────────────────────────┐
 │  Gin HTTP Server                            │
 │  ├─ Routing                                 │
-│  ├─ Middleware (auth, logging, etc.)        │
+│  ├─ Middleware (auth, tenant, logging)      │
 │  └─ GraphQL endpoint handler                │
 └─────────────────────────────────────────────┘
                  ▼
 ┌─────────────────────────────────────────────┐
-│  GraphQL Resolvers                          │
-│  ├─ Query resolvers                         │
-│  ├─ Mutation resolvers                      │
-│  └─ Business logic                          │
+│  MODEL: GraphQL Schemas (.graphql)          │
+│  ├─ types.graphql (entities)                │
+│  ├─ enums.graphql (enumerations)            │
+│  └─ inputs.graphql (mutations)              │
 └─────────────────────────────────────────────┘
                  ▼
 ┌─────────────────────────────────────────────┐
-│  Repository Layer                           │
+│  CONTROLLER: Business Logic (Go)            │
+│  ├─ resolver.go (GraphQL entry point)       │
+│  ├─ *_handler.go (use case logic)           │
+│  ├─ *_policy.go (business rules)            │
+│  └─ Injects core services via interfaces    │
+└─────────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────┐
+│  VIEW: Consumers                            │
+│  ├─ view/web/ (React components)            │
+│  ├─ view/cli/ (Admin CLI tools)             │
+│  ├─ view/jobs/ (Background workers)         │
+│  └─ view/mobile/ (Mobile API handlers)      │
+└─────────────────────────────────────────────┘
+                 ▼
+┌─────────────────────────────────────────────┐
+│  Repository Layer (generated/)              │
 │  ├─ Database abstraction                    │
 │  ├─ Cypher query builders                   │
 │  └─ Transaction management                  │
@@ -272,32 +323,40 @@ schema/
 
 ## 🔄 Code Generation Flow
 
+> See [mvc_design.md](backend/mvc_design.md) Section 10 for complete generation details.
+
 ```
-┌──────────────────────┐
-│  schema.graphql      │  ← Edit GraphQL schema
-│  (Single Source)     │
-└──────────────────────┘
-          │
-          ├─────────────────────────┐
-          ▼                         ▼
 ┌──────────────────────┐   ┌──────────────────────┐
-│  gqlgen              │   │  graphql-codegen     │
-│  (Backend)           │   │  (Frontend)          │
+│  Arrows.app          │   │  model/*.graphql     │
+│  (Visual Design)     │   │  (Per-app schemas)   │
 └──────────────────────┘   └──────────────────────┘
           │                         │
-          ▼                         ▼
-┌──────────────────────┐   ┌──────────────────────┐
-│  Go Types            │   │  TypeScript Types    │
-│  - models_gen.go     │   │  - generated.ts      │
-│  - Resolver stubs    │   │  - React Query hooks │
-│  - Input types       │   │  - Type guards       │
-└──────────────────────┘   └──────────────────────┘
-          │                         │
-          ▼                         ▼
-┌──────────────────────┐   ┌──────────────────────┐
-│  Implement           │   │  Use in components   │
-│  Resolvers           │   │  with type safety    │
-└──────────────────────┘   └──────────────────────┘
+          ▼                         │
+┌──────────────────────┐            │
+│  graph-models/*.json │            │
+│  (Export to repo)    │────────────┤
+└──────────────────────┘            │
+                                    ▼
+                        ┌──────────────────────┐
+                        │  grgn generate       │
+                        │  (CLI orchestrates)  │
+                        └──────────────────────┘
+                                    │
+          ┌─────────────────────────┼─────────────────────────┐
+          ▼                         ▼                         ▼
+┌──────────────────────┐   ┌──────────────────────┐   ┌──────────────────────┐
+│  gqlgen (Backend)    │   │  Repository Gen      │   │  graphql-codegen     │
+│  - models_gen.go     │   │  - interfaces.go     │   │  (Frontend)          │
+│  - Resolver stubs    │   │  - neo4j_impl.go     │   │  - generated.ts      │
+│  - Input types       │   │  - Type mappers      │   │  - React Query hooks │
+└──────────────────────┘   └──────────────────────┘   └──────────────────────┘
+          │                         │                         │
+          └─────────────────────────┼─────────────────────────┘
+                                    ▼
+                        ┌──────────────────────┐
+                        │  generated/ folder   │
+                        │  (per app)           │
+                        └──────────────────────┘
 ```
 
 ---
@@ -312,7 +371,7 @@ schema/
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐ │
 │  │  web         │  │  backend     │  │  neo4j       │ │
 │  │              │  │              │  │              │ │
-│  │  Node:18     │  │  golang:1.21 │  │  neo4j:5     │ │
+│  │  Node:18     │  │  golang:1.24 │  │  neo4j:5     │ │
 │  │  Vite Dev    │  │  Gin Server  │  │  Database    │ │
 │  │              │  │              │  │              │ │
 │  │  :5173       │  │  :8080       │  │  :7687       │ │
@@ -495,31 +554,49 @@ Frontend
 
 ## 🎯 Key Design Principles
 
-1. **Separation of Concerns**
-   - Frontend: Presentation
-   - Backend: Business logic
-   - Database: Persistence
+> See [mvc_design.md](backend/mvc_design.md) Section 2 for detailed principles.
 
-2. **Type Safety**
+1. **MVC Pattern (Redefined)**
+   - **Model**: Declarative GraphQL schemas (.graphql files)
+   - **View**: Web, CLI, Jobs, Mobile (not just HTML)
+   - **Controller**: Business logic, resolvers, policies
+
+2. **Internal SDK Pattern**
+   - Product domains consume core services via interfaces
+   - Never call external drivers directly
+   - Single point of change for infrastructure swaps
+
+3. **Domain Isolation (Configurable)**
+   - `strict` / `relaxed` / `open` / `custom` policies
+   - Developer-defined in `service_config.yaml`
+   - Validated by `grgn` CLI
+
+4. **Type Safety**
    - TypeScript on frontend
    - Go on backend
    - GraphQL schema as contract
+   - Domain-prefixed types prevent collisions
 
-3. **Code Generation**
-   - Reduce boilerplate
-   - Maintain consistency
-   - Catch errors early
+5. **Configuration Locality**
+   - Each app has `service_config.yaml`
+   - Hierarchical inheritance (uber-go/config)
+   - No giant global config file
 
-4. **Containerization**
-   - Consistent environments
-   - Easy deployment
-   - Scalable infrastructure
+6. **Schema-First Development**
+   - GraphQL schemas are single source of truth
+   - Code generation for types, resolvers, repositories
+   - Visual design with Arrows.app
 
-5. **Testing**
-   - Unit tests
-   - Integration tests
-   - E2E tests (future)
+7. **Multi-Tenancy by Design**
+   - Configurable isolation (property vs database)
+   - Neo4j Fabric for cross-database queries
+   - Tenant context middleware
+
+8. **CLI-Driven Development**
+   - `grgn` CLI for scaffolding, validation, deployment
+   - `grgn make:*` for code generation
+   - `grgn migrate` for schema management (golang-migrate)
 
 ---
 
-This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities.
+This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities. For the complete specification, see **[backend/mvc_design.md](backend/mvc_design.md)**.

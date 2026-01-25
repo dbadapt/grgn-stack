@@ -218,12 +218,15 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Documentation
 
+> **Development Focus:** 🚀 MVC Platform Implementation (See [mvc_design.md](backend/mvc_design.md))
+
 ### Getting Started
 
 - **[TEMPLATE-SETUP.md](TEMPLATE-SETUP.md)** - 🎯 Complete template setup guide (START HERE)
 - **[USING-TEMPLATE.md](USING-TEMPLATE.md)** - Quick template usage reference
 - **[QUICK-REFERENCE.md](QUICK-REFERENCE.md)** - ⚡ Command cheat sheet
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - 🏗️ System architecture & data flow
+- **[backend/mvc_design.md](backend/mvc_design.md)** - 🚀 MVC Platform Implementation Specification (CURRENT FOCUS)
 
 ### Development Guides
 
@@ -246,26 +249,26 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Project Structure
 
+> **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](backend/mvc_design.md)).
+
 ```
 ├── backend/                 # Go backend
-│   ├── cmd/                # CLI commands (migrate, etc.)
-│   ├── internal/
-│   │   ├── database/      # Neo4j connection & migrations
-│   │   ├── graphql/       # GraphQL resolvers & generated code
-│   │   └── repository/    # Data access layer
-│   ├── main.go
-│   └── gqlgen.yml         # GraphQL codegen config
-├── pkg/                    # Shared Go packages
-│   └── config/            # Configuration management
+│   ├── cmd/                # CLI commands (grgn, migrate, etc.)
+│   ├── internal/           # Modular Monolith Domains
+│   │   ├── core/           # Infrastructure Domains (Shared, Auth, Tenant)
+│   │   └── {product}/      # Product Domains (e.g., twitter, commerce)
+│   ├── pkg/                # Standalone importable Go packages
+│   ├── main.go             # Application entry point
+│   └── gqlgen.yml          # GraphQL codegen config
 ├── web/                    # React frontend
 │   ├── src/
-│   │   ├── graphql/      # GraphQL queries & generated code
-│   │   └── config/       # Environment configuration
-│   ├── codegen.yml       # GraphQL codegen config
+│   │   ├── domains/        # Domain-specific UI components
+│   │   ├── graphql/        # GraphQL queries & generated code
+│   │   └── config/         # Environment configuration
 │   └── vite.config.ts
 ├── schema/                 # Shared schema definitions
-│   ├── schema.graphql    # GraphQL API schema
-│   └── graph-models/     # Visual Neo4j models (Arrows.app)
+│   ├── schema.graphql      # GraphQL API schema
+│   └── graph-models/       # Visual Neo4j models (Arrows.app)
 ├── scripts/                # Utility scripts
 ├── .github/workflows/      # CI/CD workflows
 └── docker-compose*.yml     # Docker configurations
