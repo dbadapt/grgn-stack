@@ -1,0 +1,21 @@
+# Config file for air: https://github.com/air-verse/air
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # The command to build the binary.
+  cmd = "go build -o ./tmp/main ."
+  # The binary to run.
+  bin = "./tmp/main"
+  # Log file for the build process.
+  log = "air_build.log"
+  # Delay between build attempts.
+  delay = 1000 # ms
+  # Stop on error.
+  stop_on_error = true
+
+[watch]
+  # Directories to watch.
+  includes = ["."]
+  # Directories to exclude.
+  excludes = ["tmp", "vendor"]
