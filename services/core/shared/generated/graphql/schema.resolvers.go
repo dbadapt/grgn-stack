@@ -9,7 +9,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yourusername/grgn-stack/internal/graphql/model"
+	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
 )
 
 // Empty is the resolver for the _empty field.

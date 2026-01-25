@@ -1,4 +1,6 @@
-package database
+// Package shared provides core infrastructure services for the GRGN stack.
+// This is the controller layer for services/core/shared.
+package shared
 
 import (
 	"context"
@@ -9,13 +11,14 @@ import (
 	"github.com/yourusername/grgn-stack/pkg/config"
 )
 
-// Neo4jDB wraps the Neo4j driver and provides database operations
+// Neo4jDB wraps the Neo4j driver and provides database operations.
+// It implements the database abstraction for the GRGN stack.
 type Neo4jDB struct {
 	driver neo4j.DriverWithContext
 	config *config.Config
 }
 
-// NewNeo4jDB creates a new Neo4j database connection with connection pooling
+// NewNeo4jDB creates a new Neo4j database connection with connection pooling.
 func NewNeo4jDB(cfg *config.Config) (*Neo4jDB, error) {
 	if cfg == nil {
 		return nil, fmt.Errorf("config cannot be nil")
@@ -55,7 +58,7 @@ func NewNeo4jDB(cfg *config.Config) (*Neo4jDB, error) {
 	return db, nil
 }
 
-// VerifyConnectivity checks if the database is accessible and responsive
+// VerifyConnectivity checks if the database is accessible and responsive.
 func (db *Neo4jDB) VerifyConnectivity(ctx context.Context) error {
 	if db.driver == nil {
 		return fmt.Errorf("driver is not initialized")
@@ -70,12 +73,12 @@ func (db *Neo4jDB) VerifyConnectivity(ctx context.Context) error {
 	return nil
 }
 
-// GetDriver returns the underlying Neo4j driver for advanced usage
+// GetDriver returns the underlying Neo4j driver for advanced usage.
 func (db *Neo4jDB) GetDriver() neo4j.DriverWithContext {
 	return db.driver
 }
 
-// ExecuteRead executes a read transaction with automatic retry
+// ExecuteRead executes a read transaction with automatic retry.
 func (db *Neo4jDB) ExecuteRead(ctx context.Context, work neo4j.ManagedTransactionWork) (any, error) {
 	session := db.driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close(ctx)
@@ -88,7 +91,7 @@ func (db *Neo4jDB) ExecuteRead(ctx context.Context, work neo4j.ManagedTransactio
 	return result, nil
 }
 
-// ExecuteWrite executes a write transaction with automatic retry
+// ExecuteWrite executes a write transaction with automatic retry.
 func (db *Neo4jDB) ExecuteWrite(ctx context.Context, work neo4j.ManagedTransactionWork) (any, error) {
 	session := db.driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close(ctx)
@@ -101,12 +104,12 @@ func (db *Neo4jDB) ExecuteWrite(ctx context.Context, work neo4j.ManagedTransacti
 	return result, nil
 }
 
-// NewSession creates a new session for manual transaction management
+// NewSession creates a new session for manual transaction management.
 func (db *Neo4jDB) NewSession(ctx context.Context, config neo4j.SessionConfig) neo4j.SessionWithContext {
 	return db.driver.NewSession(ctx, config)
 }
 
-// Close gracefully closes the database connection and releases resources
+// Close gracefully closes the database connection and releases resources.
 func (db *Neo4jDB) Close(ctx context.Context) error {
 	if db.driver == nil {
 		return nil
@@ -119,12 +122,12 @@ func (db *Neo4jDB) Close(ctx context.Context) error {
 	return nil
 }
 
-// Ping performs a simple connectivity check (alias for VerifyConnectivity)
+// Ping performs a simple connectivity check (alias for VerifyConnectivity).
 func (db *Neo4jDB) Ping(ctx context.Context) error {
 	return db.VerifyConnectivity(ctx)
 }
 
-// GetServerInfo retrieves information about the connected Neo4j server
+// GetServerInfo retrieves information about the connected Neo4j server.
 func (db *Neo4jDB) GetServerInfo(ctx context.Context) (map[string]any, error) {
 	session := db.driver.NewSession(ctx, neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	defer session.Close(ctx)

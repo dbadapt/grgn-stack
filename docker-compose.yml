@@ -21,7 +21,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: ./backend/Dockerfile
+      dockerfile: ./Dockerfile
     ports:
       - '8080:8080'
     environment:
@@ -29,8 +29,8 @@ services:
       - GRGN_STACK_DATABASE_NEO4J_USERNAME=neo4j
       - GRGN_STACK_DATABASE_NEO4J_PASSWORD=devpassword
     volumes:
-      - ./backend:/app
-      - ./pkg:/pkg
+      - .:/app
+      - /app/tmp
     depends_on:
       neo4j:
         condition: service_healthy

@@ -16,7 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	"github.com/yourusername/grgn-stack/internal/graphql/model"
+	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
 )
 
 // region    ************************** generated!.gotpl **************************

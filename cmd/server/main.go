@@ -12,9 +12,9 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
-	"github.com/yourusername/grgn-stack/internal/database"
-	"github.com/yourusername/grgn-stack/internal/graphql"
 	"github.com/yourusername/grgn-stack/pkg/config"
+	shared "github.com/yourusername/grgn-stack/services/core/shared/controller"
+	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql"
 )
 
 func main() {
@@ -26,8 +26,7 @@ func main() {
 
 	// Initialize Neo4j database connection
 	log.Println("Connecting to Neo4j database...")
-	db, err := database.NewNeo4jDB(cfg)
-
+	db, err := shared.NewNeo4jDB(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create database connection: %v", err)
 	}
@@ -73,35 +72,9 @@ func main() {
 
 	r := gin.Default()
 
-	// Health check endpoint with database connectivity check
-	r.GET("/ping", func(c *gin.Context) {
-		dbStatus := "healthy"
-		dbError := ""
-
-		// Check database connectivity
-		ctx, cancel := context.WithTimeout(c.Request.Context(), 2*time.Second)
-		defer cancel()
-
-		if err := db.Ping(ctx); err != nil {
-			dbStatus = "unhealthy"
-			dbError = err.Error()
-			c.JSON(503, gin.H{
-				"message":     "pong",
-				"environment": cfg.Server.Environment,
-				"version":     cfg.App.Version,
-				"database":    dbStatus,
-				"error":       dbError,
-			})
-			return
-		}
-
-		c.JSON(200, gin.H{
-			"message":     "pong",
-			"environment": cfg.Server.Environment,
-			"version":     cfg.App.Version,
-			"database":    dbStatus,
-		})
-	})
+	// Create ping handler and register route
+	pingHandler := shared.NewPingHandler(db, cfg)
+	r.GET("/ping", pingHandler.HandlePing)
 
 	// GraphQL setup
 	gqlResolver := &graphql.Resolver{}

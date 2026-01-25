@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 
 [build]
   # The command to build the binary.
-  cmd = "go build -o ./tmp/main ."
+  cmd = "go build -o ./tmp/main ./cmd/server"
   # The binary to run.
   bin = "./tmp/main"
   # Log file for the build process.
@@ -16,6 +16,6 @@ tmp_dir = "tmp"
 
 [watch]
   # Directories to watch.
-  includes = ["."]
+  includes = ["cmd", "pkg", "services"]
   # Directories to exclude.
-  excludes = ["tmp", "vendor"]
+  excludes = ["tmp", "vendor", "web", "backend"]

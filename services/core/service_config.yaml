@@ -1,0 +1,15 @@
+# services/core/service_config.yaml
+# Core domain configuration
+
+version: "1.0"
+
+domain:
+  name: core
+  prefix: Core
+  description: "Infrastructure domain - authentication, tenancy, shared services"
+
+# Architecture policy for core domain
+architecture:
+  isolation: strict  # Core cannot import from product domains
+  naming: required
+  onViolation: error

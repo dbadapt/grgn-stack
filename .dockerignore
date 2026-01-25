@@ -33,6 +33,9 @@ Thumbs.db
 .git/
 .gitignore
 
+# Old backend directory (being migrated)
+backend/
+
 # Coverage reports
 coverage/
 *.out
