@@ -68,7 +68,7 @@ The initialization script will:
 - 🎨 **React Frontend**: Mantine UI components + TanStack Query
 - 🗄️ **Neo4j Database**: Graph database with migration support
 - 🔐 **Authentication Ready**: Multi-provider auth structure prepared (implementation required)
-- 🎨 **Visual Schema Design**: Arrows.app integration for collaborative modeling
+- 🎨 **Schema-First Design**: GraphQL schemas colocated with services
 - 🐳 **Fully Containerized**: Docker Compose for all environments
 - ✅ **Testing**: Comprehensive test coverage with CI/CD
 - 🔄 **Multi-Environment**: Dev, staging, production configurations
@@ -87,7 +87,7 @@ The initialization script will:
 - Testing infrastructure (Go + Vitest)
 - Code generation (gqlgen + graphql-codegen)
 - Git hooks (Husky + lint-staged)
-- Visual schema design workflow (Arrows.app)
+- Schema-first GraphQL workflow
 
 ### 🔨 You Implement
 
@@ -196,25 +196,22 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Schema Design & Development
 
-**Visual Design + AI Code Generation Workflow:**
+**Schema-First Development Workflow:**
 
-- 🎨 **You**: Design graph models visually in [Arrows.app](https://arrows.app)
-- 🤖 **Copilot**: Generates code across all layers automatically
+- GraphQL schemas are colocated in `services/{domain}/{app}/model/*.graphql`
+- Code generation produces type-safe Go and TypeScript code
+- Database migrations managed alongside service code
 
 **Documentation:**
 
-- [SCHEMA-QUICKREF.md](SCHEMA-QUICKREF.md) - **START HERE** - Quick reference
-- [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) - Complete collaborative workflow
-- [schema/graph-models/README.md](schema/graph-models/README.md) - Visual model library
 - [DATABASE.md](DATABASE.md) - Neo4j graph database schema
-- [GRAPHQL.md](GRAPHQL.md) - GraphQL API schema
+- [GRAPHQL.md](GRAPHQL.md) - GraphQL API schema and code generation
 
 **Quick Start:**
 
-1. Open https://arrows.app
-2. Import model from `schema/graph-models/`
-3. Edit and export JSON
-4. Tell Copilot: "I updated [model], implement it"
+1. Edit GraphQL schema in `services/{domain}/{app}/model/*.graphql`
+2. Run `npm run generate` to regenerate code
+3. Implement resolvers in `services/{domain}/{app}/controller/`
 
 ## Documentation
 
@@ -230,8 +227,6 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ### Development Guides
 
-- [SCHEMA-QUICKREF.md](SCHEMA-QUICKREF.md) - Schema design quick reference
-- [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) - Visual design + Copilot workflow
 - [DATABASE.md](DATABASE.md) - Neo4j graph database design
 - [GRAPHQL.md](GRAPHQL.md) - GraphQL schema and code generation
 - [CONFIG.md](CONFIG.md) - Multi-environment configuration guide
@@ -326,9 +321,9 @@ See [HOOKS.md](HOOKS.md) for details.
 
 ### Schema-First Development
 
-- GraphQL schema (`schema/schema.graphql`) is the single source of truth
+- GraphQL schemas colocated in `services/{domain}/{app}/model/*.graphql`
 - Automatic code generation for both backend (Go) and frontend (TypeScript)
-- Visual graph modeling with Arrows.app for Neo4j schema
+- Neo4j graph database for flexible relationship modeling
 
 ### Type Safety
 
@@ -360,8 +355,8 @@ See [HOOKS.md](HOOKS.md) for details.
 
 This template provides the foundation. Add your business logic:
 
-1. Design your graph model in Arrows.app
-2. Let Copilot generate migrations, resolvers, and repositories
+1. Define your GraphQL schema in `services/{domain}/{app}/model/`
+2. Generate code and implement resolvers
 3. Add your frontend components
 4. Deploy with Docker Compose
 

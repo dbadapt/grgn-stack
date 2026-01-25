@@ -4,16 +4,9 @@
 
 This template uses Neo4j graph database to model users, authentication, and domain entities. The graph structure allows flexible relationships between entities and efficient traversal queries.
 
-> **Note:** This document shows the **base template schema**. The User and AuthProvider nodes are included by default. Add your own domain-specific nodes using the [Schema Workflow](SCHEMA-WORKFLOW.md).
+> **Note:** This document shows the **base template schema**. The User and AuthProvider nodes are included by default. Add your own domain-specific nodes by extending the GraphQL schemas in `services/{domain}/{app}/model/`.
 
-## Visual Design Tools
-
-### Recommended: Arrows.app
-
-- Online tool: https://arrows.app
-- Create and save graph models as JSON
-- Export to Cypher for implementation
-- Save designs in `services/{domain}/{app}/model/` directory
+## Design Tools
 
 ### Neo4j Browser
 
@@ -147,9 +140,9 @@ ORDER BY a.createdAt
 
 ### Adding Your Domain Nodes
 
-1. **Design visually** in [Arrows.app](https://arrows.app)
-2. **Export JSON** to `services/{domain}/{app}/model/your-model.json`
-3. **Create migration** in `services/{domain}/{app}/migrations/` (or root `migrations/` for core)
+1. **Define types** in `services/{domain}/{app}/model/*.graphql`
+2. **Create migration** in `services/{domain}/{app}/migrations/` (or root `migrations/` for core)
+3. **Run code generation** with `npm run generate`
 4. **Update this document** with your new nodes
 
 ### Example: Adding a Post Node

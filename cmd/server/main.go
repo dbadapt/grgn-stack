@@ -25,18 +25,31 @@ func main() {
 	}
 
 	// Initialize Neo4j database connection
-	log.Println("Connecting to Neo4j database...")
+	log.Printf("Connecting to Neo4j database at %s...", cfg.Database.Neo4jURI)
 	db, err := shared.NewNeo4jDB(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create database connection: %v", err)
 	}
 
-	// Verify database connectivity
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// Verify database connectivity with retry
+	var dbConnected bool
+	for i := 0; i < 10; i++ {
+		log.Printf("Verifying database connectivity (attempt %d/10)...", i+1)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		err = db.VerifyConnectivity(ctx)
+		cancel()
 
-	if err := db.VerifyConnectivity(ctx); err != nil {
-		log.Fatalf("Failed to connect to Neo4j: %v", err)
+		if err == nil {
+			dbConnected = true
+			break
+		}
+
+		log.Printf("Database not ready: %v. Retrying in 2 seconds...", err)
+		time.Sleep(2 * time.Second)
+	}
+
+	if !dbConnected {
+		log.Fatalf("Failed to connect to Neo4j after 10 attempts: %v", err)
 	}
 	log.Println("Successfully connected to Neo4j")
 
@@ -95,7 +108,14 @@ func main() {
 
 	// Start server
 	addr := fmt.Sprintf("%s:%s", cfg.Server.Host, cfg.Server.Port)
-	log.Printf("Starting %s server on %s (environment: %s)", cfg.App.Name, addr, cfg.Server.Environment)
+	log.Printf("Starting %s server...", cfg.App.Name)
+	log.Printf("Environment: %s", cfg.Server.Environment)
+	log.Printf("Version: %s", cfg.App.Version)
+	log.Printf("Listening on: http://%s", addr)
+	log.Printf("GraphQL endpoint: http://%s/graphql", addr)
+	if !cfg.IsProduction() {
+		log.Printf("GraphQL Playground: http://%s/graphql", addr)
+	}
 
 	if err := r.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)

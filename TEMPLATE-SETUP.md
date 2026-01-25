@@ -186,7 +186,7 @@ npm run coverage
 │   ├── vite.config.ts
 │   └── package.json
 ├── pkg/                 # Shared Go packages (config)
-├── schema/              # GraphQL schema & graph models
+├── services/            # Modular monolith domains (GraphQL schemas in model/)
 ├── scripts/             # Utility scripts
 ├── .github/workflows/   # CI/CD pipelines
 └── docker-compose*.yml  # Container orchestration
@@ -222,18 +222,17 @@ Each has separate configuration in the respective compose file.
 
 ## Schema Design Workflow
 
-This stack includes a visual schema design workflow using [Arrows.app](https://arrows.app):
+This stack uses a schema-first GraphQL development workflow:
 
-1. **Design visually** in Arrows.app
-2. **Export JSON** to `schema/graph-models/`
-3. **Tell Copilot** to generate code from your design
-4. **Copilot generates**:
-   - Neo4j migrations
-   - GraphQL schema
-   - Resolvers
-   - Repository methods
+1. **Edit GraphQL schema** in `services/{domain}/{app}/model/*.graphql`
+2. **Run code generation** with `npm run generate`
+3. **Implement resolvers** in `services/{domain}/{app}/controller/`
+4. **Generated code** includes:
+   - Go types and resolver stubs
+   - TypeScript types and React Query hooks
+   - Repository interfaces
 
-See [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) for details.
+See [GRAPHQL.md](GRAPHQL.md) for details.
 
 ---
 
@@ -411,7 +410,7 @@ If ports are already in use, update in:
 
 ## Next Steps
 
-1. **Customize Schema**: Design your graph model in [Arrows.app](https://arrows.app)
+1. **Customize Schema**: Edit GraphQL schemas in `services/{domain}/{app}/model/`
 2. **Add Authentication**: Implement OAuth providers (Google, Apple, etc.)
 3. **Build Features**: Add your business logic
 4. **Configure CI/CD**: Set up GitHub secrets for deployment

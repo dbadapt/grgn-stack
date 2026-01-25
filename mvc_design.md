@@ -105,8 +105,7 @@ Domains like `twitter` **never interact with raw external drivers** (Postmark, S
 
 GraphQL schemas (`.graphql` files) are the **single source of truth** and are colocated within app models:
 
-1. Design entities in Arrows.app → Export JSON
-2. Define GraphQL types in `services/{domain}/{app}/model/*.graphql`
+1. Define GraphQL types in `services/{domain}/{app}/model/*.graphql`
 3. Generate Go types, resolvers, and repository stubs
 4. Implement business logic in controllers
 
@@ -168,7 +167,7 @@ No giant global config file.
 │   │   │   ├── model/               # SHARED SCHEMAS & MODELS
 │   │   │   │   ├── scalars.graphql  # DateTime, JSON, Email, UUID
 │   │   │   │   ├── common.graphql   # PageInfo, Error, interfaces
-│   │   │   │   ├── core-model.json  # Arrows.app visual model
+│   │   │   │   ├── schema.graphql   # Core GraphQL schema
 │   │   │   │   └── types.go         # Shared Go types
 │   │   │   ├── view/
 │   │   │   │   ├── web/             # BASE REACT COMPONENTS (Design System)
@@ -314,8 +313,7 @@ model/
 ├── enums.graphql        # Enumeration types
 ├── inputs.graphql       # Input types for mutations
 ├── interfaces.graphql   # Shared interfaces
-├── directives.graphql   # Custom directives
-└── {app}-model.json     # Arrows.app visual model
+└── directives.graphql   # Custom directives
 ```
 
 **Rules**:
@@ -1048,7 +1046,7 @@ $ grgn deploy:azure          # Deploy to Azure (AKS)
 # 1. Create new app
 $ grgn make:app twitter/notifications
 
-# 2. Define model (manually edit or use arrows.app)
+# 2. Define model (edit GraphQL schema)
 $ code services/twitter/notifications/model/types.graphql
 
 # 3. Generate from model

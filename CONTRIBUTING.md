@@ -105,10 +105,12 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
 ## Project Structure
 
 ```
-backend/          # Go backend (Gin + GraphQL)
+cmd/             # Entry points (server, migrate, worker)
+pkg/             # Standalone packages (config)
+services/        # Modular monolith domains
+  core/          # Infrastructure (shared, auth, tenant)
+  {product}/     # Product domains with apps
 web/             # React frontend (TypeScript)
-internal/        # Shared Go packages
-schema/          # GraphQL schema & graph models
 scripts/         # Utility scripts
 .github/         # CI/CD workflows
 ```

@@ -47,7 +47,7 @@
     "format": "npm run lint:fix",
     "// Code Generation": "",
     "generate": "npm run generate:backend && npm run generate:frontend",
-    "generate:backend": "go run github.com/99designs/gqlgen generate",
+    "generate:backend": "cd services/core/shared && go run github.com/99designs/gqlgen generate",
     "generate:frontend": "cd web && npm run generate",
     "// Database": "",
     "db:migrate": "echo 'Migration tool not yet migrated to new structure'",

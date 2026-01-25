@@ -1,0 +1,40 @@
+# gqlgen configuration for core/shared service
+# Schema location follows the service model pattern
+
+schema:
+  - model/*.graphql
+
+exec:
+  filename: generated/graphql/generated.go
+  package: graphql
+
+model:
+  filename: generated/graphql/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  dir: generated/graphql
+  package: graphql
+  filename_template: "{name}.resolvers.go"
+
+# Optional: Autobind models
+# autobind:
+#   - "github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
+
+# Model mappings for custom scalars
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+  Int:
+    model:
+      - github.com/99designs/gqlgen/graphql.Int
+      - github.com/99designs/gqlgen/graphql.Int64
+      - github.com/99designs/gqlgen/graphql.Int32
+  UUID:
+    model:
+      - github.com/99designs/gqlgen/graphql.UUID
+  Time:
+    model:
+      - github.com/99designs/gqlgen/graphql.Time

@@ -294,7 +294,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../../schema/schema.graphql", Input: `# GraphQL Schema - Generic Multi-Tenant Application Template
+	{Name: "../../model/schema.graphql", Input: `# GraphQL Schema - Generic Multi-Tenant Application Template
 # Go + Neo4j + GraphQL + React Stack
 
 scalar Time
@@ -488,7 +488,7 @@ func (ec *executionContext) _Query_me(ctx context.Context, field graphql.Collect
 			return ec.resolvers.Query().Me(ctx)
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋinternalᚋgraphqlᚋmodelᚐUser,
+		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		false,
 	)
@@ -530,7 +530,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 			return ec.resolvers.Query().User(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋinternalᚋgraphqlᚋmodelᚐUser,
+		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		false,
 	)
@@ -3299,7 +3299,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋinternalᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

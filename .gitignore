@@ -27,8 +27,8 @@ bin/
 *.log
 _output/
 _test/
-backend/coverage.out
-backend/coverage.html
+coverage.out
+coverage.html
 go.work.sum
 
 # Node
@@ -54,13 +54,14 @@ web/coverage/
 docker-compose.override.yml
 
 # Project specific
-backend/tmp/*
-!backend/tmp/.gitkeep
+tmp/*
+!tmp/.gitkeep
 mcp-servers.json
 
 # Build debug artifacts
-backend/*.txt
-backend/backend/
+*.txt
+server.log
+server.exe
 
 # Template artifacts (remove after init)
 bin/grgn-stack

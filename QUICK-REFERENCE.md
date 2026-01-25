@@ -211,25 +211,21 @@ VITE_ENVIRONMENT=development
 
 ## 🎨 Schema Design
 
-1. **Design in Arrows.app**
-   - Visit https://arrows.app
-   - Create nodes and relationships
-   - Export as JSON
+1. **Edit GraphQL Schema**
+   - Edit `services/{domain}/{app}/model/*.graphql`
+   - Define types, queries, and mutations
 
-2. **Save model**
+2. **Generate code**
 
    ```bash
-   # Save to:
-   services/{domain}/{app}/model/your-model.json
+   npm run generate
    ```
 
-3. **Generate code**
-   - Ask Copilot to read the model
-   - Update GraphQL schema
-   - Generate migrations
-   - Create resolvers
+3. **Implement resolvers**
+   - Add business logic in `services/{domain}/{app}/controller/`
+   - Create migrations if needed
 
-See [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) for details.
+See [GRAPHQL.md](GRAPHQL.md) for details.
 
 ## 🧪 Testing Tips
 
