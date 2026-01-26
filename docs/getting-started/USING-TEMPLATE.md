@@ -70,12 +70,12 @@ rm -rf .git  # Remove template's git history
 
 ## Next Steps
 
-- 📖 Read [QUICK-REFERENCE.md](QUICK-REFERENCE.md) for common commands
-- 🏗️ Review [ARCHITECTURE.md](ARCHITECTURE.md) for system overview
-- 📊 Design your schema with [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md)
-- 🧪 Set up testing with [TESTING-CI.md](TESTING-CI.md)
+- 📖 Read [QUICK-REFERENCE.md](../development/QUICK-REFERENCE.md) for common commands
+- 🏗️ Review [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) for system overview
+- 📊 Design your schema with [GRAPHQL.md](../development/GRAPHQL.md)
+- 🧪 Set up testing with [TESTING-CI.md](../testing/TESTING-CI.md)
 
 ## Need Help?
 
-- Check the documentation files in the project root
-- Review [TEMPLATE-SETUP.md](TEMPLATE-SETUP.md) for detailed setup instructions
+- Check the [documentation table of contents](../_TOC.md)
+- Review [TEMPLATE-SETUP.md](./TEMPLATE-SETUP.md) for detailed setup instructions

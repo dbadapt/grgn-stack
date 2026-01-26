@@ -232,7 +232,7 @@ This stack uses a schema-first GraphQL development workflow:
    - TypeScript types and React Query hooks
    - Repository interfaces
 
-See [GRAPHQL.md](GRAPHQL.md) for details.
+See [GRAPHQL.md](../development/GRAPHQL.md) for details.
 
 ---
 
@@ -307,7 +307,7 @@ GitHub Actions workflows are pre-configured:
 - **Docker Build**: Builds container images
 - **Deploy**: Deployment workflows
 
-See [CI-CD.md](CI-CD.md) for setup instructions.
+See [CI-CD.md](../testing/CI-CD.md) for setup instructions.
 
 ---
 
@@ -330,16 +330,15 @@ npm install  # Automatically runs 'husky' script
 
 Comprehensive guides are included:
 
-- [README.md](README.md) - Project overview
-- [USING-TEMPLATE.md](USING-TEMPLATE.md) - Quick template usage
-- [CONFIG.md](CONFIG.md) - Multi-environment configuration
-- [DATABASE.md](DATABASE.md) - Neo4j schema & migrations
-- [GRAPHQL.md](GRAPHQL.md) - GraphQL schema & code generation
-- [SCHEMA-WORKFLOW.md](SCHEMA-WORKFLOW.md) - Visual schema design
-- [TESTING-CI.md](TESTING-CI.md) - Testing strategy
-- [COVERAGE.md](COVERAGE.md) - Coverage tracking
-- [CI-CD.md](CI-CD.md) - Deployment pipelines
-- [HOOKS.md](HOOKS.md) - Git hooks setup
+- [README.md](../../README.md) - Project overview
+- [USING-TEMPLATE.md](./USING-TEMPLATE.md) - Quick template usage
+- [CONFIG.md](../guides/CONFIG.md) - Multi-environment configuration
+- [DATABASE.md](../architecture/DATABASE.md) - Neo4j schema & migrations
+- [GRAPHQL.md](../development/GRAPHQL.md) - GraphQL schema & code generation
+- [TESTING-CI.md](../testing/TESTING-CI.md) - Testing strategy
+- [COVERAGE.md](../testing/COVERAGE.md) - Coverage tracking
+- [CI-CD.md](../testing/CI-CD.md) - Deployment pipelines
+- [HOOKS.md](../guides/HOOKS.md) - Git hooks setup
 
 ---
 

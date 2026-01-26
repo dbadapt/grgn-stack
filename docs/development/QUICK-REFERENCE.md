@@ -225,7 +225,7 @@ VITE_ENVIRONMENT=development
    - Add business logic in `services/{domain}/{app}/controller/`
    - Create migrations if needed
 
-See [GRAPHQL.md](GRAPHQL.md) for details.
+See [GRAPHQL.md](./GRAPHQL.md) for details.
 
 ## 🧪 Testing Tips
 
@@ -331,17 +331,17 @@ docker-compose restart neo4j
 
 ## 📚 Documentation
 
-| File                                     | Purpose                |
-| ---------------------------------------- | ---------------------- |
-| [README.md](README.md)                   | Main documentation     |
-| [TEMPLATE-SETUP.md](TEMPLATE-SETUP.md)   | Template setup guide   |
-| [CONFIG.md](CONFIG.md)                   | Configuration guide    |
-| [DATABASE.md](DATABASE.md)               | Database schema        |
-| [GRAPHQL.md](GRAPHQL.md)                 | GraphQL guide          |
-| [TESTING-CI.md](TESTING-CI.md)           | Testing & CI/CD        |
-| [COVERAGE.md](COVERAGE.md)               | Coverage tracking      |
-| [CI-CD.md](CI-CD.md)                     | Deployment guide       |
-| [CONTRIBUTING.md](CONTRIBUTING.md)       | How to contribute      |
+| File                                                       | Purpose                |
+| ---------------------------------------------------------- | ---------------------- |
+| [README.md](../../README.md)                               | Main documentation     |
+| [TEMPLATE-SETUP.md](../getting-started/TEMPLATE-SETUP.md)  | Template setup guide   |
+| [CONFIG.md](../guides/CONFIG.md)                           | Configuration guide    |
+| [DATABASE.md](../architecture/DATABASE.md)                 | Database schema        |
+| [GRAPHQL.md](./GRAPHQL.md)                                 | GraphQL guide          |
+| [TESTING-CI.md](../testing/TESTING-CI.md)                  | Testing & CI/CD        |
+| [COVERAGE.md](../testing/COVERAGE.md)                      | Coverage tracking      |
+| [CI-CD.md](../testing/CI-CD.md)                            | Deployment guide       |
+| [CONTRIBUTING.md](./CONTRIBUTING.md)                       | How to contribute      |
 
 ## 🎯 Common Tasks
 

@@ -351,4 +351,4 @@ git commit -m "feat: add user authentication"
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Debugging Workflows](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/about-monitoring-and-troubleshooting)
-- [CI-CD.md](CI-CD.md) - Complete pipeline documentation
+- [CI-CD.md](./CI-CD.md) - Complete pipeline documentation

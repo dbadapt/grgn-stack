@@ -2,7 +2,7 @@
 
 Visual overview of the GRGN Stack architecture and how components interact.
 
-> **Note:** For the formalized MVC platform implementation specification, domain isolation policies, and internal SDK patterns, please refer to the primary design document: **[mvc_design.md](mvc_design.md)** (Current Development Focus 🚀).
+> **Note:** For the formalized MVC platform implementation specification, domain isolation policies, and internal SDK patterns, please refer to the primary design document: **[mvc_design.md](./mvc_design.md)** (Current Development Focus).
 
 ---
 
@@ -104,7 +104,7 @@ VIEW: Cache Invalidation → UI Update
 
 ## 📁 Project Structure
 
-> See [mvc_design.md](mvc_design.md) Section 3 for complete file layout.
+> See [mvc_design.md](./mvc_design.md) Section 3 for complete file layout.
 
 ```
 /
@@ -441,7 +441,7 @@ Frontend (Distributed)
 
 ## 🎯 Key Design Principles
 
-> See [mvc_design.md](mvc_design.md) Section 2 for detailed principles.
+> See [mvc_design.md](./mvc_design.md) Section 2 for detailed principles.
 
 1. **MVC Pattern (Redefined)**
    - **Model**: Declarative GraphQL schemas colocated in each app.
@@ -473,4 +473,4 @@ Frontend (Distributed)
 
 ---
 
-This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities. For the complete specification, see **[mvc_design.md](mvc_design.md)**.
+This architecture provides a solid foundation for building scalable, maintainable full-stack applications with graph database capabilities. For the complete specification, see **[mvc_design.md](./mvc_design.md)**.

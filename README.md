@@ -13,6 +13,8 @@
 
 A modern, production-ready full-stack template for building applications with Go, Neo4j graph database, GraphQL API, and React frontend.
 
+> **Documentation**: [Table of Contents](docs/_TOC.md) - Complete guides and references
+
 ---
 
 ## ⚡ Prerequisites
@@ -57,7 +59,7 @@ The initialization script will:
 - ✅ Create environment files
 - ✅ Clean up template artifacts
 
-📖 **For detailed setup instructions, see [TEMPLATE-SETUP.md](TEMPLATE-SETUP.md)**
+📖 **For detailed setup instructions, see [TEMPLATE-SETUP.md](docs/getting-started/TEMPLATE-SETUP.md)**
 
 ---
 
@@ -192,7 +194,7 @@ npm run generate:backend
 npm run generate:frontend
 ```
 
-See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
+See [GRAPHQL.md](docs/development/GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Schema Design & Development
 
@@ -204,8 +206,8 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 **Documentation:**
 
-- [DATABASE.md](DATABASE.md) - Neo4j graph database schema
-- [GRAPHQL.md](GRAPHQL.md) - GraphQL API schema and code generation
+- [DATABASE.md](docs/architecture/DATABASE.md) - Neo4j graph database schema
+- [GRAPHQL.md](docs/development/GRAPHQL.md) - GraphQL API schema and code generation
 
 **Quick Start:**
 
@@ -215,36 +217,36 @@ See [GRAPHQL.md](GRAPHQL.md) for comprehensive GraphQL guide.
 
 ## Documentation
 
-> **Development Focus:** 🚀 MVC Platform Implementation (See [mvc_design.md](mvc_design.md))
+> **Development Focus:** [MVC Platform Implementation](docs/architecture/mvc_design.md)
 
 ### Getting Started
 
-- **[TEMPLATE-SETUP.md](TEMPLATE-SETUP.md)** - 🎯 Complete template setup guide (START HERE)
-- **[USING-TEMPLATE.md](USING-TEMPLATE.md)** - Quick template usage reference
-- **[QUICK-REFERENCE.md](QUICK-REFERENCE.md)** - ⚡ Command cheat sheet
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - 🏗️ System architecture & data flow
-- **[mvc_design.md](mvc_design.md)** - 🚀 MVC Platform Implementation Specification (CURRENT FOCUS)
+- **[Template Setup](docs/getting-started/TEMPLATE-SETUP.md)** - Complete template setup guide (START HERE)
+- **[Template Usage](docs/getting-started/USING-TEMPLATE.md)** - Quick template usage reference
+- **[Quick Reference](docs/development/QUICK-REFERENCE.md)** - Command cheat sheet
+- **[Architecture](docs/architecture/ARCHITECTURE.md)** - System architecture & data flow
+- **[MVC Design](docs/architecture/mvc_design.md)** - MVC Platform Specification (CURRENT FOCUS)
 
 ### Development Guides
 
-- [DATABASE.md](DATABASE.md) - Neo4j graph database design
-- [GRAPHQL.md](GRAPHQL.md) - GraphQL schema and code generation
-- [CONFIG.md](CONFIG.md) - Multi-environment configuration guide
+- [Database](docs/architecture/DATABASE.md) - Neo4j graph database design
+- [GraphQL](docs/development/GRAPHQL.md) - GraphQL schema and code generation
+- [Configuration](docs/guides/CONFIG.md) - Multi-environment configuration guide
 
 ### Testing & Deployment
 
-- [COVERAGE.md](COVERAGE.md) - Code coverage and testing
-- [TESTING-CI.md](TESTING-CI.md) - Local CI testing guide
-- [CI-CD.md](CI-CD.md) - CI/CD pipeline and deployment
+- [Coverage](docs/testing/COVERAGE.md) - Code coverage and testing
+- [Testing CI](docs/testing/TESTING-CI.md) - Local CI testing guide
+- [CI/CD](docs/testing/CI-CD.md) - CI/CD pipeline and deployment
 
 ### Contributing
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
-- [HOOKS.md](HOOKS.md) - Git hooks with Husky
+- [Contributing](docs/development/CONTRIBUTING.md) - How to contribute
+- [Hooks](docs/guides/HOOKS.md) - Git hooks with Husky
 
 ## Project Structure
 
-> **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](mvc_design.md)).
+> **Note:** The structure below reflects the **Target Modular Architecture** (See [mvc_design.md](docs/architecture/mvc_design.md)).
 
 ```
 /
@@ -272,7 +274,7 @@ grgn migrate
 grgn migrate:create {domain}/{app} {description}
 ```
 
-See [DATABASE.md](DATABASE.md) for schema design guide.
+See [DATABASE.md](docs/architecture/DATABASE.md) for schema design guide.
 
 
 ## Environment Configuration
@@ -290,7 +292,7 @@ docker-compose -f docker-compose.yml -f docker-compose.staging.yml up
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
-See [CONFIG.md](CONFIG.md) for configuration guide.
+See [CONFIG.md](docs/guides/CONFIG.md) for configuration guide.
 
 ## Testing & CI/CD
 
@@ -304,7 +306,7 @@ npm run coverage:backend
 npm run coverage:frontend
 ```
 
-See [TESTING-CI.md](TESTING-CI.md) and [CI-CD.md](CI-CD.md) for details.
+See [TESTING-CI.md](docs/testing/TESTING-CI.md) and [CI-CD.md](docs/testing/CI-CD.md) for details.
 
 ## Contributing
 
@@ -315,7 +317,7 @@ This project uses:
 - **ESLint** for code linting
 - **Go fmt** and **go vet** for Go code quality
 
-See [HOOKS.md](HOOKS.md) for details.
+See [HOOKS.md](docs/guides/HOOKS.md) for details.
 
 ## Architecture Highlights
 
@@ -366,7 +368,7 @@ This template provides the foundation. Add your business logic:
 
 ## Support
 
-- 📖 Read the [documentation](./DATABASE.md)
+- 📖 Read the [documentation](docs/_TOC.md)
 - 🐛 Report issues on [GitHub Issues](https://github.com/dbadapt/grgn-stack/issues)
 - 💬 Discuss on [GitHub Discussions](https://github.com/dbadapt/grgn-stack/discussions)
 
