@@ -1,0 +1,33 @@
+# gqlgen configuration for core/identity app
+
+schema:
+  - "../shared/model/*.graphql"    # Import shared scalars and base types
+  - "model/*.graphql"              # Identity-specific schemas
+
+exec:
+  filename: generated/graphql/generated.go
+  package: graphql
+
+model:
+  filename: generated/graphql/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  dir: generated/graphql
+  package: graphql
+  filename_template: "{name}.resolvers.go"
+
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+  DateTime:
+    model:
+      - github.com/99designs/gqlgen/graphql.Time
+  UUID:
+    model:
+      - github.com/99designs/gqlgen/graphql.UUID
+  Time:
+    model:
+      - github.com/99designs/gqlgen/graphql.Time

@@ -1,0 +1,60 @@
+# Tenant App - Core Types
+
+type Tenant {
+  id: ID!
+  name: String!
+  slug: String!
+  plan: TenantPlan!
+  isolationMode: TenantIsolationMode!
+  status: TenantStatus!
+  members: [Membership!]!
+  memberCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Membership {
+  id: ID!
+  user: User!
+  tenant: Tenant!
+  role: MembershipRole!
+  joinedAt: DateTime!
+  invitedBy: User
+}
+
+extend type Query {
+  # Get tenant by ID
+  tenant(id: ID!): Tenant
+  
+  # Get tenant by slug
+  tenantBySlug(slug: String!): Tenant
+  
+  # Get all tenants current user belongs to
+  myTenants: [Tenant!]!
+  
+  # Get all members of a tenant
+  tenantMembers(tenantId: ID!): [Membership!]!
+}
+
+extend type Mutation {
+  # Create a new tenant (current user becomes owner)
+  createTenant(input: CreateTenantInput!): Tenant!
+  
+  # Update tenant details
+  updateTenant(id: ID!, input: UpdateTenantInput!): Tenant!
+  
+  # Delete a tenant (owner only)
+  deleteTenant(id: ID!): Boolean!
+  
+  # Invite a user to tenant
+  inviteMember(tenantId: ID!, input: InviteMemberInput!): Membership!
+  
+  # Update member's role
+  updateMemberRole(membershipId: ID!, role: MembershipRole!): Membership!
+  
+  # Remove a member from tenant
+  removeMember(membershipId: ID!): Boolean!
+  
+  # Leave a tenant (current user)
+  leaveTenant(tenantId: ID!): Boolean!
+}

@@ -1,0 +1,6 @@
+# Identity App - Input Types
+
+input UpdateProfileInput {
+  name: String
+  avatarUrl: String
+}

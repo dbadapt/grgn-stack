@@ -16,7 +16,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
+	"github.com/yourusername/grgn-stack/services/core/tenant/generated/graphql/model"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -590,11 +590,11 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../../model/scalars.graphql", Input: `# Common scalars used across all apps
+	{Name: "../../../shared/model/scalars.graphql", Input: `# Common scalars used across all apps
 scalar DateTime
 scalar UUID
 `, BuiltIn: false},
-	{Name: "../../model/schema.graphql", Input: `# GraphQL Schema - GRGN Stack Core Shared
+	{Name: "../../../shared/model/schema.graphql", Input: `# GraphQL Schema - GRGN Stack Core Shared
 # Base types extended by all apps
 
 scalar Time
@@ -659,7 +659,7 @@ extend type Mutation {
   deleteAccount: Boolean!
 }
 `, BuiltIn: false},
-	{Name: "../../../tenant/model/enums.graphql", Input: `# Tenant App - Enums
+	{Name: "../../model/enums.graphql", Input: `# Tenant App - Enums
 
 enum TenantPlan {
   FREE
@@ -685,7 +685,7 @@ enum MembershipRole {
   VIEWER      # Read-only access
 }
 `, BuiltIn: false},
-	{Name: "../../../tenant/model/inputs.graphql", Input: `# Tenant App - Input Types
+	{Name: "../../model/inputs.graphql", Input: `# Tenant App - Input Types
 
 input CreateTenantInput {
   name: String!
@@ -704,7 +704,7 @@ input InviteMemberInput {
   role: MembershipRole = MEMBER
 }
 `, BuiltIn: false},
-	{Name: "../../../tenant/model/types.graphql", Input: `# Tenant App - Core Types
+	{Name: "../../model/types.graphql", Input: `# Tenant App - Core Types
 
 type Tenant {
   id: ID!
@@ -775,7 +775,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createTenant_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐCreateTenantInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNCreateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐCreateTenantInput)
 	if err != nil {
 		return nil, err
 	}
@@ -802,7 +802,7 @@ func (ec *executionContext) field_Mutation_inviteMember_args(ctx context.Context
 		return nil, err
 	}
 	args["tenantId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNInviteMemberInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐInviteMemberInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNInviteMemberInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐInviteMemberInput)
 	if err != nil {
 		return nil, err
 	}
@@ -840,7 +840,7 @@ func (ec *executionContext) field_Mutation_updateMemberRole_args(ctx context.Con
 		return nil, err
 	}
 	args["membershipId"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "role", ec.unmarshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "role", ec.unmarshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole)
 	if err != nil {
 		return nil, err
 	}
@@ -851,7 +851,7 @@ func (ec *executionContext) field_Mutation_updateMemberRole_args(ctx context.Con
 func (ec *executionContext) field_Mutation_updateProfile_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateProfileInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUpdateProfileInput)
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateProfileInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUpdateProfileInput)
 	if err != nil {
 		return nil, err
 	}
@@ -867,7 +867,7 @@ func (ec *executionContext) field_Mutation_updateTenant_args(ctx context.Context
 		return nil, err
 	}
 	args["id"] = arg0
-	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUpdateTenantInput)
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "input", ec.unmarshalNUpdateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUpdateTenantInput)
 	if err != nil {
 		return nil, err
 	}
@@ -1021,7 +1021,7 @@ func (ec *executionContext) _Membership_user(ctx context.Context, field graphql.
 			return obj.User, nil
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
+		ec.marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		true,
 	)
@@ -1066,7 +1066,7 @@ func (ec *executionContext) _Membership_tenant(ctx context.Context, field graphq
 			return obj.Tenant, nil
 		},
 		nil,
-		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
+		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
 		true,
 		true,
 	)
@@ -1117,7 +1117,7 @@ func (ec *executionContext) _Membership_role(ctx context.Context, field graphql.
 			return obj.Role, nil
 		},
 		nil,
-		ec.marshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole,
+		ec.marshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole,
 		true,
 		true,
 	)
@@ -1175,7 +1175,7 @@ func (ec *executionContext) _Membership_invitedBy(ctx context.Context, field gra
 			return obj.InvitedBy, nil
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
+		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		false,
 	)
@@ -1250,7 +1250,7 @@ func (ec *executionContext) _Mutation_updateProfile(ctx context.Context, field g
 			return ec.resolvers.Mutation().UpdateProfile(ctx, fc.Args["input"].(model.UpdateProfileInput))
 		},
 		nil,
-		ec.marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
+		ec.marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		true,
 	)
@@ -1336,7 +1336,7 @@ func (ec *executionContext) _Mutation_createTenant(ctx context.Context, field gr
 			return ec.resolvers.Mutation().CreateTenant(ctx, fc.Args["input"].(model.CreateTenantInput))
 		},
 		nil,
-		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
+		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
 		true,
 		true,
 	)
@@ -1399,7 +1399,7 @@ func (ec *executionContext) _Mutation_updateTenant(ctx context.Context, field gr
 			return ec.resolvers.Mutation().UpdateTenant(ctx, fc.Args["id"].(string), fc.Args["input"].(model.UpdateTenantInput))
 		},
 		nil,
-		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
+		ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
 		true,
 		true,
 	)
@@ -1503,7 +1503,7 @@ func (ec *executionContext) _Mutation_inviteMember(ctx context.Context, field gr
 			return ec.resolvers.Mutation().InviteMember(ctx, fc.Args["tenantId"].(string), fc.Args["input"].(model.InviteMemberInput))
 		},
 		nil,
-		ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembership,
+		ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembership,
 		true,
 		true,
 	)
@@ -1558,7 +1558,7 @@ func (ec *executionContext) _Mutation_updateMemberRole(ctx context.Context, fiel
 			return ec.resolvers.Mutation().UpdateMemberRole(ctx, fc.Args["membershipId"].(string), fc.Args["role"].(model.MembershipRole))
 		},
 		nil,
-		ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembership,
+		ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembership,
 		true,
 		true,
 	)
@@ -1723,7 +1723,7 @@ func (ec *executionContext) _Query_me(ctx context.Context, field graphql.Collect
 			return ec.resolvers.Query().Me(ctx)
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
+		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		false,
 	)
@@ -1769,7 +1769,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 			return ec.resolvers.Query().User(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser,
+		ec.marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser,
 		true,
 		false,
 	)
@@ -1826,7 +1826,7 @@ func (ec *executionContext) _Query_tenant(ctx context.Context, field graphql.Col
 			return ec.resolvers.Query().Tenant(ctx, fc.Args["id"].(string))
 		},
 		nil,
-		ec.marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
+		ec.marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
 		true,
 		false,
 	)
@@ -1889,7 +1889,7 @@ func (ec *executionContext) _Query_tenantBySlug(ctx context.Context, field graph
 			return ec.resolvers.Query().TenantBySlug(ctx, fc.Args["slug"].(string))
 		},
 		nil,
-		ec.marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
+		ec.marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant,
 		true,
 		false,
 	)
@@ -1951,7 +1951,7 @@ func (ec *executionContext) _Query_myTenants(ctx context.Context, field graphql.
 			return ec.resolvers.Query().MyTenants(ctx)
 		},
 		nil,
-		ec.marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantᚄ,
+		ec.marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantᚄ,
 		true,
 		true,
 	)
@@ -2003,7 +2003,7 @@ func (ec *executionContext) _Query_tenantMembers(ctx context.Context, field grap
 			return ec.resolvers.Query().TenantMembers(ctx, fc.Args["tenantId"].(string))
 		},
 		nil,
-		ec.marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ,
+		ec.marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ,
 		true,
 		true,
 	)
@@ -2281,7 +2281,7 @@ func (ec *executionContext) _Tenant_plan(ctx context.Context, field graphql.Coll
 			return obj.Plan, nil
 		},
 		nil,
-		ec.marshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan,
+		ec.marshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan,
 		true,
 		true,
 	)
@@ -2310,7 +2310,7 @@ func (ec *executionContext) _Tenant_isolationMode(ctx context.Context, field gra
 			return obj.IsolationMode, nil
 		},
 		nil,
-		ec.marshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode,
+		ec.marshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode,
 		true,
 		true,
 	)
@@ -2339,7 +2339,7 @@ func (ec *executionContext) _Tenant_status(ctx context.Context, field graphql.Co
 			return obj.Status, nil
 		},
 		nil,
-		ec.marshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus,
+		ec.marshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus,
 		true,
 		true,
 	)
@@ -2368,7 +2368,7 @@ func (ec *executionContext) _Tenant_members(ctx context.Context, field graphql.C
 			return obj.Members, nil
 		},
 		nil,
-		ec.marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ,
+		ec.marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ,
 		true,
 		true,
 	)
@@ -2614,7 +2614,7 @@ func (ec *executionContext) _User_status(ctx context.Context, field graphql.Coll
 			return obj.Status, nil
 		},
 		nil,
-		ec.marshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus,
+		ec.marshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus,
 		true,
 		true,
 	)
@@ -4171,7 +4171,7 @@ func (ec *executionContext) unmarshalInputCreateTenantInput(ctx context.Context,
 			it.Slug = data
 		case "plan":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plan"))
-			data, err := ec.unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx, v)
+			data, err := ec.unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4209,7 +4209,7 @@ func (ec *executionContext) unmarshalInputInviteMemberInput(ctx context.Context,
 			it.Email = data
 		case "role":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx, v)
+			data, err := ec.unmarshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4277,14 +4277,14 @@ func (ec *executionContext) unmarshalInputUpdateTenantInput(ctx context.Context,
 			it.Name = data
 		case "plan":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("plan"))
-			data, err := ec.unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx, v)
+			data, err := ec.unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Plan = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx, v)
+			data, err := ec.unmarshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5183,7 +5183,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNCreateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐCreateTenantInput(ctx context.Context, v any) (model.CreateTenantInput, error) {
+func (ec *executionContext) unmarshalNCreateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐCreateTenantInput(ctx context.Context, v any) (model.CreateTenantInput, error) {
 	res, err := ec.unmarshalInputCreateTenantInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -5236,16 +5236,16 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNInviteMemberInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐInviteMemberInput(ctx context.Context, v any) (model.InviteMemberInput, error) {
+func (ec *executionContext) unmarshalNInviteMemberInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐInviteMemberInput(ctx context.Context, v any) (model.InviteMemberInput, error) {
 	res, err := ec.unmarshalInputInviteMemberInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNMembership2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx context.Context, sel ast.SelectionSet, v model.Membership) graphql.Marshaler {
+func (ec *executionContext) marshalNMembership2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx context.Context, sel ast.SelectionSet, v model.Membership) graphql.Marshaler {
 	return ec._Membership(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Membership) graphql.Marshaler {
+func (ec *executionContext) marshalNMembership2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Membership) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5269,7 +5269,7 @@ func (ec *executionContext) marshalNMembership2ᚕᚖgithubᚗcomᚋyourusername
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx, sel, v[i])
+			ret[i] = ec.marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5289,7 +5289,7 @@ func (ec *executionContext) marshalNMembership2ᚕᚖgithubᚗcomᚋyourusername
 	return ret
 }
 
-func (ec *executionContext) marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx context.Context, sel ast.SelectionSet, v *model.Membership) graphql.Marshaler {
+func (ec *executionContext) marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembership(ctx context.Context, sel ast.SelectionSet, v *model.Membership) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5299,13 +5299,13 @@ func (ec *executionContext) marshalNMembership2ᚖgithubᚗcomᚋyourusernameᚋ
 	return ec._Membership(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, v any) (model.MembershipRole, error) {
+func (ec *executionContext) unmarshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, v any) (model.MembershipRole, error) {
 	var res model.MembershipRole
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, sel ast.SelectionSet, v model.MembershipRole) graphql.Marshaler {
+func (ec *executionContext) marshalNMembershipRole2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, sel ast.SelectionSet, v model.MembershipRole) graphql.Marshaler {
 	return v
 }
 
@@ -5325,11 +5325,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTenant2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v model.Tenant) graphql.Marshaler {
+func (ec *executionContext) marshalNTenant2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v model.Tenant) graphql.Marshaler {
 	return ec._Tenant(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tenant) graphql.Marshaler {
+func (ec *executionContext) marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Tenant) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5353,7 +5353,7 @@ func (ec *executionContext) marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋg
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx, sel, v[i])
+			ret[i] = ec.marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5373,7 +5373,7 @@ func (ec *executionContext) marshalNTenant2ᚕᚖgithubᚗcomᚋyourusernameᚋg
 	return ret
 }
 
-func (ec *executionContext) marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v *model.Tenant) graphql.Marshaler {
+func (ec *executionContext) marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v *model.Tenant) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5383,51 +5383,51 @@ func (ec *executionContext) marshalNTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgn
 	return ec._Tenant(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode(ctx context.Context, v any) (model.TenantIsolationMode, error) {
+func (ec *executionContext) unmarshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode(ctx context.Context, v any) (model.TenantIsolationMode, error) {
 	var res model.TenantIsolationMode
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode(ctx context.Context, sel ast.SelectionSet, v model.TenantIsolationMode) graphql.Marshaler {
+func (ec *executionContext) marshalNTenantIsolationMode2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantIsolationMode(ctx context.Context, sel ast.SelectionSet, v model.TenantIsolationMode) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, v any) (model.TenantPlan, error) {
+func (ec *executionContext) unmarshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, v any) (model.TenantPlan, error) {
 	var res model.TenantPlan
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, sel ast.SelectionSet, v model.TenantPlan) graphql.Marshaler {
+func (ec *executionContext) marshalNTenantPlan2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, sel ast.SelectionSet, v model.TenantPlan) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, v any) (model.TenantStatus, error) {
+func (ec *executionContext) unmarshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, v any) (model.TenantStatus, error) {
 	var res model.TenantStatus
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, sel ast.SelectionSet, v model.TenantStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNTenantStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, sel ast.SelectionSet, v model.TenantStatus) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNUpdateProfileInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUpdateProfileInput(ctx context.Context, v any) (model.UpdateProfileInput, error) {
+func (ec *executionContext) unmarshalNUpdateProfileInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUpdateProfileInput(ctx context.Context, v any) (model.UpdateProfileInput, error) {
 	res, err := ec.unmarshalInputUpdateProfileInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUpdateTenantInput(ctx context.Context, v any) (model.UpdateTenantInput, error) {
+func (ec *executionContext) unmarshalNUpdateTenantInput2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUpdateTenantInput(ctx context.Context, v any) (model.UpdateTenantInput, error) {
 	res, err := ec.unmarshalInputUpdateTenantInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5437,13 +5437,13 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋyourusernameᚋgrgn�
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus(ctx context.Context, v any) (model.UserStatus, error) {
+func (ec *executionContext) unmarshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus(ctx context.Context, v any) (model.UserStatus, error) {
 	var res model.UserStatus
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus(ctx context.Context, sel ast.SelectionSet, v model.UserStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNUserStatus2githubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUserStatus(ctx context.Context, sel ast.SelectionSet, v model.UserStatus) graphql.Marshaler {
 	return v
 }
 
@@ -5730,7 +5730,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, v any) (*model.MembershipRole, error) {
+func (ec *executionContext) unmarshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, v any) (*model.MembershipRole, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5739,7 +5739,7 @@ func (ec *executionContext) unmarshalOMembershipRole2ᚖgithubᚗcomᚋyourusern
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, sel ast.SelectionSet, v *model.MembershipRole) graphql.Marshaler {
+func (ec *executionContext) marshalOMembershipRole2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐMembershipRole(ctx context.Context, sel ast.SelectionSet, v *model.MembershipRole) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -5764,14 +5764,14 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v *model.Tenant) graphql.Marshaler {
+func (ec *executionContext) marshalOTenant2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenant(ctx context.Context, sel ast.SelectionSet, v *model.Tenant) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Tenant(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, v any) (*model.TenantPlan, error) {
+func (ec *executionContext) unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, v any) (*model.TenantPlan, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5780,14 +5780,14 @@ func (ec *executionContext) unmarshalOTenantPlan2ᚖgithubᚗcomᚋyourusername�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, sel ast.SelectionSet, v *model.TenantPlan) graphql.Marshaler {
+func (ec *executionContext) marshalOTenantPlan2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantPlan(ctx context.Context, sel ast.SelectionSet, v *model.TenantPlan) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, v any) (*model.TenantStatus, error) {
+func (ec *executionContext) unmarshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, v any) (*model.TenantStatus, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -5796,14 +5796,14 @@ func (ec *executionContext) unmarshalOTenantStatus2ᚖgithubᚗcomᚋyourusernam
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, sel ast.SelectionSet, v *model.TenantStatus) graphql.Marshaler {
+func (ec *executionContext) marshalOTenantStatus2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐTenantStatus(ctx context.Context, sel ast.SelectionSet, v *model.TenantStatus) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋsharedᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋyourusernameᚋgrgnᚑstackᚋservicesᚋcoreᚋtenantᚋgeneratedᚋgraphqlᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

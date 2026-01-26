@@ -1,0 +1,22 @@
+# Feature Flag App Configuration
+app:
+  name: feature
+  domain: core
+  description: Hierarchical feature flag system with A/B testing support
+
+dependencies:
+  - core/shared
+  - core/identity  # For createdBy user references
+
+features:
+  boolean_flags: true
+  multivariate_flags: true
+  percentage_rollouts: true
+  targeting_rules: true
+  hierarchical_overrides: true
+
+# Schema notes for SDK implementers:
+# - Flags are evaluated by scope hierarchy: APP > TENANT > DOMAIN > GLOBAL
+# - Percentage rollouts use deterministic hashing with salt for consistency
+# - Targeting rules within a segment use AND logic (all must match)
+# - Override segments are evaluated by priority (lower number = higher priority)

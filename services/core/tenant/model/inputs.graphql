@@ -1,0 +1,18 @@
+# Tenant App - Input Types
+
+input CreateTenantInput {
+  name: String!
+  slug: String!
+  plan: TenantPlan = FREE
+}
+
+input UpdateTenantInput {
+  name: String
+  plan: TenantPlan
+  status: TenantStatus
+}
+
+input InviteMemberInput {
+  email: String!
+  role: MembershipRole = MEMBER
+}

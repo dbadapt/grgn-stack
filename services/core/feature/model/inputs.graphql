@@ -1,0 +1,103 @@
+# Feature Flag App - Input Types
+
+"""Input for specifying a scope during flag evaluation"""
+input ScopeInput {
+  """The scope type (APP, TENANT, DOMAIN, GLOBAL)"""
+  scopeType: ScopeType!
+  """The ID of the scope entity"""
+  scopeId: String!
+}
+
+"""Input for creating a new feature flag"""
+input CreateFeatureFlagInput {
+  """Unique key for the flag (lowercase, underscores allowed)"""
+  key: String!
+  """Human-readable description"""
+  description: String
+  """Type of flag: BOOLEAN or MULTIVARIATE"""
+  flagType: FlagType!
+  """Whether the flag is enabled (default: true)"""
+  isEnabled: Boolean
+  """Default value when no overrides match (JSON)"""
+  defaultValue: JSON!
+  """Optional tags for organization"""
+  tags: [String!]
+}
+
+"""Input for updating a feature flag"""
+input UpdateFeatureFlagInput {
+  """Updated description"""
+  description: String
+  """Updated default value (JSON)"""
+  defaultValue: JSON
+  """Updated tags"""
+  tags: [String!]
+}
+
+"""Input for creating an override segment"""
+input CreateOverrideSegmentInput {
+  """Priority for evaluation order (lower = higher priority)"""
+  priority: Int!
+  """Scope type this override applies to"""
+  scopeType: ScopeType!
+  """ID of the scope entity (or '*' for global)"""
+  scopeId: String!
+  """Optional name for this segment"""
+  name: String
+  """Targeting rules (all must match)"""
+  rules: [TargetingRuleInput!]
+  """Rollout strategy"""
+  rollout: RolloutStrategyInput!
+  """Whether this override is active (default: true)"""
+  isActive: Boolean
+}
+
+"""Input for updating an override segment"""
+input UpdateOverrideSegmentInput {
+  """Updated priority"""
+  priority: Int
+  """Updated scope type"""
+  scopeType: ScopeType
+  """Updated scope ID"""
+  scopeId: String
+  """Updated name"""
+  name: String
+  """Updated targeting rules"""
+  rules: [TargetingRuleInput!]
+  """Updated rollout strategy"""
+  rollout: RolloutStrategyInput
+  """Updated active status"""
+  isActive: Boolean
+}
+
+"""Input for a targeting rule"""
+input TargetingRuleInput {
+  """Attribute to evaluate (e.g., 'user_email', 'region')"""
+  attribute: String!
+  """Comparison operator"""
+  operator: Operator!
+  """Value to compare against (JSON for complex values)"""
+  value: JSON!
+}
+
+"""Input for a rollout strategy"""
+input RolloutStrategyInput {
+  """Strategy type: FIXED or PERCENTAGE"""
+  strategyType: RolloutType!
+  """For FIXED: the value to return"""
+  fixedValue: JSON
+  """For PERCENTAGE: weighted variants"""
+  variants: [VariantWeightInput!]
+  """Salt for deterministic hashing (auto-generated if not provided)"""
+  salt: String
+}
+
+"""Input for a variant weight in A/B testing"""
+input VariantWeightInput {
+  """Value for this variant"""
+  variantValue: JSON!
+  """Percentage weight (0-100)"""
+  weight: Int!
+  """Optional variant name"""
+  name: String
+}

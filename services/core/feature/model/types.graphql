@@ -1,0 +1,204 @@
+# Feature Flag App - Core Types
+
+"""
+Represents a feature flag definition.
+The flag defines "what" the feature is; OverrideSegments define "to whom" it applies.
+"""
+type FeatureFlag {
+  id: ID!
+  
+  """Unique key used to reference this flag in code (e.g., 'dark_mode', 'new_checkout')"""
+  key: String!
+  
+  """Human-readable description of what this flag controls"""
+  description: String
+  
+  """Type of flag: simple boolean or multivariate for A/B testing"""
+  flagType: FlagType!
+  
+  """Master kill switch - when false, flag is completely disabled"""
+  isEnabled: Boolean!
+  
+  """Default value returned when no overrides match (JSON-encoded)"""
+  defaultValue: JSON!
+  
+  """Ordered list of override segments evaluated by priority"""
+  overrides: [OverrideSegment!]!
+  
+  """Tags for organizing and filtering flags"""
+  tags: [String!]
+  
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: User
+}
+
+"""
+Defines an override segment that can modify flag behavior for specific scopes.
+Segments are evaluated in priority order (lower number = higher priority).
+"""
+type OverrideSegment {
+  id: ID!
+  
+  """Evaluation priority (1 = highest priority, evaluated first)"""
+  priority: Int!
+  
+  """The hierarchical scope level this override applies to"""
+  scopeType: ScopeType!
+  
+  """ID of the specific scope entity (tenant ID, app ID, domain name, or '*' for global)"""
+  scopeId: String!
+  
+  """Optional name for this segment (e.g., 'Beta Users', 'Enterprise Tier')"""
+  name: String
+  
+  """Targeting rules that must ALL match for this segment to apply (AND logic)"""
+  rules: [TargetingRule!]
+  
+  """How to determine the value when this segment matches"""
+  rollout: RolloutStrategy!
+  
+  """Whether this override is currently active"""
+  isActive: Boolean!
+  
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A single targeting rule used to match users/contexts.
+Multiple rules in a segment use AND logic (all must match).
+"""
+type TargetingRule {
+  id: ID!
+  
+  """The attribute to evaluate (e.g., 'user_id', 'user_email', 'region', 'plan')"""
+  attribute: String!
+  
+  """The comparison operator to use"""
+  operator: Operator!
+  
+  """The value(s) to compare against (JSON-encoded for complex values like lists)"""
+  value: JSON!
+}
+
+"""
+Defines how to determine the actual flag value for matched users.
+Supports both fixed values and percentage-based rollouts for A/B testing.
+"""
+type RolloutStrategy {
+  """Whether this is a fixed value or percentage-based rollout"""
+  strategyType: RolloutType!
+  
+  """For FIXED strategy: the value to return (JSON-encoded)"""
+  fixedValue: JSON
+  
+  """For PERCENTAGE strategy: weighted variants for A/B testing"""
+  variants: [VariantWeight!]
+  
+  """
+  Salt for deterministic hashing in percentage rollouts.
+  Ensures users stay in the same bucket across SDK languages.
+  Should be unique per experiment to avoid bucket correlation.
+  """
+  salt: String
+}
+
+"""
+A weighted variant for A/B testing percentage rollouts.
+Weights should sum to 100 across all variants in a strategy.
+"""
+type VariantWeight {
+  """The value to return for users in this variant (JSON-encoded)"""
+  variantValue: JSON!
+  
+  """Percentage weight (0-100) for this variant"""
+  weight: Int!
+  
+  """Optional name for this variant (e.g., 'control', 'treatment_a')"""
+  name: String
+}
+
+# ----- Query Extensions -----
+
+extend type Query {
+  """Get a feature flag by ID"""
+  featureFlag(id: ID!): FeatureFlag
+  
+  """Get a feature flag by its unique key"""
+  featureFlagByKey(key: String!): FeatureFlag
+  
+  """
+  List all feature flags with optional filtering.
+  Returns flags sorted by key.
+  """
+  featureFlags(
+    """Filter by tags (returns flags matching ANY of the provided tags)"""
+    tags: [String!]
+    """Filter by enabled status"""
+    isEnabled: Boolean
+    """Filter by flag type"""
+    flagType: FlagType
+    """Pagination: number of results to skip"""
+    offset: Int
+    """Pagination: maximum number of results to return"""
+    limit: Int
+  ): [FeatureFlag!]!
+  
+  """
+  Evaluate feature flags for a specific context.
+  Returns all applicable flags with their resolved values for the given scopes.
+  Scopes should be provided in order of specificity (most specific first).
+  """
+  evaluateFlags(
+    """The scopes to evaluate, in order of specificity"""
+    scopes: [ScopeInput!]!
+    """Optional: specific flag keys to evaluate (evaluates all if not provided)"""
+    flagKeys: [String!]
+    """Context attributes for targeting rule evaluation"""
+    context: JSON
+  ): [EvaluatedFlag!]!
+}
+
+"""Result of evaluating a feature flag for a specific context"""
+type EvaluatedFlag {
+  """The flag key"""
+  key: String!
+  
+  """The resolved value for this context (JSON-encoded)"""
+  value: JSON!
+  
+  """Which override segment matched (null if using default)"""
+  matchedSegment: OverrideSegment
+  
+  """For percentage rollouts: which variant was selected"""
+  selectedVariant: String
+}
+
+# ----- Mutation Extensions -----
+
+extend type Mutation {
+  """Create a new feature flag"""
+  createFeatureFlag(input: CreateFeatureFlagInput!): FeatureFlag!
+  
+  """Update an existing feature flag"""
+  updateFeatureFlag(id: ID!, input: UpdateFeatureFlagInput!): FeatureFlag!
+  
+  """Delete a feature flag"""
+  deleteFeatureFlag(id: ID!): Boolean!
+  
+  """Toggle a feature flag's enabled status (master kill switch)"""
+  toggleFeatureFlag(id: ID!, isEnabled: Boolean!): FeatureFlag!
+  
+  """Add an override segment to a feature flag"""
+  addOverrideSegment(flagId: ID!, input: CreateOverrideSegmentInput!): OverrideSegment!
+  
+  """Update an override segment"""
+  updateOverrideSegment(id: ID!, input: UpdateOverrideSegmentInput!): OverrideSegment!
+  
+  """Delete an override segment"""
+  deleteOverrideSegment(id: ID!): Boolean!
+  
+  """Reorder override segments (updates priorities)"""
+  reorderOverrideSegments(flagId: ID!, segmentIds: [ID!]!): [OverrideSegment!]!
+}

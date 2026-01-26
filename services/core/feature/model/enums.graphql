@@ -1,0 +1,47 @@
+# Feature Flag App - Enums
+
+"""
+Defines the hierarchical scope at which a feature flag override applies.
+Evaluated in order of specificity: APP > TENANT > DOMAIN > GLOBAL
+"""
+enum ScopeType {
+  GLOBAL    # Applies to all users across the system
+  DOMAIN    # Applies to a specific business domain
+  TENANT    # Applies to a specific tenant/organization
+  APP       # Applies to a specific application instance
+}
+
+"""
+Defines the type of value a feature flag returns.
+"""
+enum FlagType {
+  BOOLEAN      # Simple on/off toggle
+  MULTIVARIATE # Returns one of multiple variant values (for A/B testing)
+}
+
+"""
+Defines how the flag value is determined for users.
+"""
+enum RolloutType {
+  FIXED      # All matching users get the same value
+  PERCENTAGE # Users are bucketed by percentage for gradual rollout/A/B tests
+}
+
+"""
+Logical operators for targeting rule evaluation.
+Designed to be portable across Go, Python, and TypeScript SDKs.
+"""
+enum Operator {
+  EQ          # Equals
+  NEQ         # Not equals
+  GT          # Greater than (for numeric comparisons)
+  LT          # Less than (for numeric comparisons)
+  GTE         # Greater than or equal
+  LTE         # Less than or equal
+  CONTAINS    # String contains substring
+  STARTS_WITH # String starts with prefix
+  ENDS_WITH   # String ends with suffix
+  REGEX       # Matches regular expression
+  IN          # Value is in a list
+  NOT_IN      # Value is not in a list
+}

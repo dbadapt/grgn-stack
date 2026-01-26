@@ -1,0 +1,18 @@
+# Tenant App Configuration
+app:
+  name: tenant
+  domain: core
+  description: Multi-tenant organization management
+
+dependencies:
+  - core/shared
+  - core/identity
+
+features:
+  multi_tenant: true
+  hybrid_isolation: true
+  membership_roles: true
+
+isolation:
+  default_mode: shared
+  dedicated_db_prefix: "tenant_"

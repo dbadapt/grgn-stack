@@ -1,25 +1,20 @@
-# GraphQL Schema - Generic Multi-Tenant Application Template
-# Go + Neo4j + GraphQL + React Stack
+# GraphQL Schema - GRGN Stack Core Shared
+# Base types extended by all apps
 
 scalar Time
-scalar UUID
 
-# Root Query type
+# Root Query type - extended by apps
 type Query {
   # Health check
   health: String!
-
-  # TODO: Define core domain entities (User, etc.)
 }
 
-# Root Mutation type
+# Root Mutation type - extended by apps
 type Mutation {
-  # Placeholder for future mutations
   _empty: String
 }
 
-# Root Subscription type (for future real-time updates)
+# Root Subscription type - extended by apps
 type Subscription {
-  # Placeholder for future subscriptions
   _empty: String
 }

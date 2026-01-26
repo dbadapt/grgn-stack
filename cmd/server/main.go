@@ -12,9 +12,14 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
+	"github.com/yourusername/grgn-stack/pkg/auth"
 	"github.com/yourusername/grgn-stack/pkg/config"
+	identityRepo "github.com/yourusername/grgn-stack/services/core/identity/repository"
+	identitySvc "github.com/yourusername/grgn-stack/services/core/identity/service"
 	shared "github.com/yourusername/grgn-stack/services/core/shared/controller"
 	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql"
+	tenantRepo "github.com/yourusername/grgn-stack/services/core/tenant/repository"
+	tenantSvc "github.com/yourusername/grgn-stack/services/core/tenant/service"
 )
 
 func main() {
@@ -74,6 +79,15 @@ func main() {
 		os.Exit(0)
 	}()
 
+	// Initialize repositories
+	userRepo := identityRepo.NewUserRepository(db)
+	tenantRepository := tenantRepo.NewTenantRepository(db)
+	membershipRepo := tenantRepo.NewMembershipRepository(db)
+
+	// Initialize services
+	userService := identitySvc.NewUserService(userRepo)
+	tenantService := tenantSvc.NewTenantService(tenantRepository, membershipRepo, userRepo)
+
 	// Set Gin mode based on environment
 	if cfg.IsProduction() {
 		gin.SetMode(gin.ReleaseMode)
@@ -85,12 +99,28 @@ func main() {
 
 	r := gin.Default()
 
+	// Dev-only: X-User-ID header middleware for testing
+	// This allows testing without authentication by passing the user ID in a header
+	if !cfg.IsProduction() {
+		r.Use(func(c *gin.Context) {
+			if userID := c.GetHeader("X-User-ID"); userID != "" {
+				ctx := auth.WithUserID(c.Request.Context(), userID)
+				c.Request = c.Request.WithContext(ctx)
+			}
+			c.Next()
+		})
+		log.Println("Dev mode: X-User-ID header authentication enabled")
+	}
+
 	// Create ping handler and register route
 	pingHandler := shared.NewPingHandler(db, cfg)
 	r.GET("/ping", pingHandler.HandlePing)
 
-	// GraphQL setup
-	gqlResolver := &graphql.Resolver{}
+	// GraphQL setup with dependency injection
+	gqlResolver := &graphql.Resolver{
+		UserService:   userService,
+		TenantService: tenantService,
+	}
 	gqlServer := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: gqlResolver}))
 
 	// GraphQL endpoints

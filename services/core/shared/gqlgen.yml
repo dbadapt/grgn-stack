@@ -1,8 +1,14 @@
-# gqlgen configuration for core/shared service
-# Schema location follows the service model pattern
+# gqlgen configuration for core/shared (unified schema)
+# This config combines all app schemas into a single executable schema
+# This is the recommended approach for a modular monolith
 
 schema:
+  # Shared base types and scalars (loaded first)
   - model/*.graphql
+  # Identity app schemas (User entity)
+  - ../identity/model/*.graphql
+  # Tenant app schemas (Tenant, Membership entities)
+  - ../tenant/model/*.graphql
 
 exec:
   filename: generated/graphql/generated.go
@@ -18,10 +24,6 @@ resolver:
   package: graphql
   filename_template: "{name}.resolvers.go"
 
-# Optional: Autobind models
-# autobind:
-#   - "github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
-
 # Model mappings for custom scalars
 models:
   ID:
@@ -36,5 +38,8 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.UUID
   Time:
+    model:
+      - github.com/99designs/gqlgen/graphql.Time
+  DateTime:
     model:
       - github.com/99designs/gqlgen/graphql.Time

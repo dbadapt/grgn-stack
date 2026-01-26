@@ -1,0 +1,25 @@
+# Tenant App - Enums
+
+enum TenantPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum TenantIsolationMode {
+  SHARED      # Uses shared database with tenant_id filtering
+  DEDICATED   # Has its own Neo4j database
+}
+
+enum MembershipRole {
+  OWNER       # Full control, can delete tenant
+  ADMIN       # Manage members, settings
+  MEMBER      # Standard access
+  VIEWER      # Read-only access
+}

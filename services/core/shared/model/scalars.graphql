@@ -1,0 +1,3 @@
+# Common scalars used across all apps
+scalar DateTime
+scalar UUID

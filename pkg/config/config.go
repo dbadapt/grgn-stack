@@ -1,7 +1,9 @@
 package config
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -54,25 +56,39 @@ func Load() (*Config, error) {
 	// Set default values
 	setDefaults(v)
 
-	// Read from environment variables
+	// Try to load .env file manually first (search in multiple locations)
+	envPaths := []string{".env", "../.env", "../../.env"}
+	for _, envPath := range envPaths {
+		if err := loadEnvFile(envPath); err == nil {
+			break
+		}
+	}
+
+	// Read from environment variables with GRGN_STACK prefix
+	// Map environment variables to nested config structure
 	v.SetEnvPrefix("GRGN_STACK")
-	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
-	// Try to read from config file
-	v.SetConfigName(".env")
-	v.SetConfigType("env")
-	v.AddConfigPath(".")
-	v.AddConfigPath("..")
-	v.AddConfigPath("../../")
+	// Explicitly bind environment variables to config keys
+	v.BindEnv("server.port", "GRGN_STACK_SERVER_PORT")
+	v.BindEnv("server.environment", "GRGN_STACK_SERVER_ENVIRONMENT")
+	v.BindEnv("server.host", "GRGN_STACK_SERVER_HOST")
 
-	// Read config file if it exists (optional)
-	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return nil, fmt.Errorf("error reading config file: %w", err)
-		}
-		// Config file not found; ignore error since we can use env vars
-	}
+	v.BindEnv("database.neo4j_uri", "GRGN_STACK_DATABASE_NEO4J_URI")
+	v.BindEnv("database.neo4j_username", "GRGN_STACK_DATABASE_NEO4J_USERNAME")
+	v.BindEnv("database.neo4j_password", "GRGN_STACK_DATABASE_NEO4J_PASSWORD")
+
+	v.BindEnv("auth.jwt_secret", "GRGN_STACK_AUTH_JWT_SECRET")
+	v.BindEnv("auth.google_client_id", "GRGN_STACK_AUTH_GOOGLE_CLIENT_ID")
+	v.BindEnv("auth.google_client_secret", "GRGN_STACK_AUTH_GOOGLE_CLIENT_SECRET")
+	v.BindEnv("auth.apple_client_id", "GRGN_STACK_AUTH_APPLE_CLIENT_ID")
+	v.BindEnv("auth.apple_client_secret", "GRGN_STACK_AUTH_APPLE_CLIENT_SECRET")
+	v.BindEnv("auth.session_secret", "GRGN_STACK_AUTH_SESSION_SECRET")
+
+	v.BindEnv("app.name", "GRGN_STACK_APP_NAME")
+	v.BindEnv("app.version", "GRGN_STACK_APP_VERSION")
+	v.BindEnv("app.log_level", "GRGN_STACK_APP_LOG_LEVEL")
+	v.BindEnv("app.frontend_url", "GRGN_STACK_APP_FRONTEND_URL")
 
 	var config Config
 	if err := v.Unmarshal(&config); err != nil {
@@ -80,6 +96,49 @@ func Load() (*Config, error) {
 	}
 
 	return &config, nil
+}
+
+// loadEnvFile loads environment variables from a .env file
+func loadEnvFile(filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines and comments
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Parse KEY=value
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		// Remove surrounding quotes if present
+		if len(value) >= 2 {
+			if (value[0] == '"' && value[len(value)-1] == '"') ||
+				(value[0] == '\'' && value[len(value)-1] == '\'') {
+				value = value[1 : len(value)-1]
+			}
+		}
+
+		// Only set if not already set (env vars take precedence)
+		if os.Getenv(key) == "" {
+			os.Setenv(key, value)
+		}
+	}
+
+	return scanner.Err()
 }
 
 // setDefaults sets default configuration values

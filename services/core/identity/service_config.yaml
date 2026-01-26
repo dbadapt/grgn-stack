@@ -1,0 +1,12 @@
+# Identity App Configuration
+app:
+  name: identity
+  domain: core
+  description: User identity and profile management
+
+dependencies:
+  - core/shared
+
+features:
+  user_profiles: true
+  avatar_upload: false  # Future feature
