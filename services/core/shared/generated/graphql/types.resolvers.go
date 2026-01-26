@@ -11,8 +11,6 @@ import (
 	"github.com/yourusername/grgn-stack/services/core/shared/generated/graphql/model"
 )
 
-// Identity Mutations
-
 // UpdateProfile is the resolver for the updateProfile field.
 func (r *mutationResolver) UpdateProfile(ctx context.Context, input model.UpdateProfileInput) (*model.User, error) {
 	return r.UserService.UpdateProfile(ctx, input)
@@ -26,8 +24,6 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context) (bool, error) {
 	}
 	return true, nil
 }
-
-// Tenant Mutations
 
 // CreateTenant is the resolver for the createTenant field.
 func (r *mutationResolver) CreateTenant(ctx context.Context, input model.CreateTenantInput) (*model.Tenant, error) {
@@ -64,8 +60,6 @@ func (r *mutationResolver) LeaveTenant(ctx context.Context, tenantID string) (bo
 	return r.TenantService.LeaveTenant(ctx, tenantID)
 }
 
-// Identity Queries
-
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 	return r.UserService.GetCurrentUser(ctx)
@@ -75,8 +69,6 @@ func (r *queryResolver) Me(ctx context.Context) (*model.User, error) {
 func (r *queryResolver) User(ctx context.Context, id string) (*model.User, error) {
 	return r.UserService.GetUserByID(ctx, id)
 }
-
-// Tenant Queries
 
 // Tenant is the resolver for the tenant field.
 func (r *queryResolver) Tenant(ctx context.Context, id string) (*model.Tenant, error) {
